@@ -15,7 +15,7 @@
   <a href="https://aquabridge-zeta.vercel.app/prototype/#demos">Demo flows</a> ·
   <a href="https://aquabridge-zeta.vercel.app/backlog/">Sprint 1 backlog</a> ·
   <a href="https://aquabridge-zeta.vercel.app/prototype/#design">Design system</a> ·
-  <a href="https://dsouzashawn305.atlassian.net/jira/software/projects/KAN/boards">Jira (KAN)</a>
+  <a href="https://dsouzashawn305.atlassian.net/jira/software/projects/KAN/boards/1">Jira (KAN)</a>
 </p>
 
 ---
