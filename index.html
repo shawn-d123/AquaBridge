@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AquaBridge Team Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Familjen+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one centred column (max 1040px): intro beside the aquarium, then a grid of destination cards. Coastal Trust palette, light only. */
+:root {
+  color-scheme: light;
+  --bg: #F4F8F7; --surface: #FFFFFF; --line: #D3E3DE; --ink: #12324A; --ink-2: #4E6677;
+  --primary: #0B7A6E; --primary-hover: #08635A; --soft: #DDF3EC;
+  --f-display: "Familjen Grotesk", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.55; }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 40px max(16px, env(safe-area-inset-right, 0px)) 64px max(16px, env(safe-area-inset-left, 0px)); }
+.intro { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 380px); gap: 32px; align-items: center; margin-bottom: 40px; }
+@media (max-width: 760px) { .intro { grid-template-columns: 1fr; } }
+.label { font-family: var(--f-mono); font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); margin: 0; }
+h1 { font-family: var(--f-display); font-size: clamp(2rem, 5vw, 2.75rem); line-height: 1.05; letter-spacing: -.02em; margin: 10px 0 12px; }
+h2 { font-family: var(--f-display); font-size: 1.25rem; margin: 0; }
+p { margin: 0; }
+.lede { color: var(--ink-2); font-size: 1.125rem; max-width: 52ch; }
+.art { width: 100%; height: auto; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; }
+.card { display: grid; gap: 8px; align-content: start; padding: 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; color: var(--ink); text-decoration: none; transition: border-color .15s; }
+.card:hover { border-color: var(--primary); }
+.card.main { background: var(--primary); border-color: var(--primary); color: #FFFFFF; }
+.card.main:hover { background: var(--primary-hover); }
+.card.main .muted { color: #DDF3EC; }
+.muted { color: var(--ink-2); font-size: .9375rem; }
+.go { font-weight: 700; font-size: .9375rem; }
+:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+.note { margin-top: 32px; padding: 14px 18px; background: var(--soft); border-radius: 6px; font-size: .9375rem; }
+footer { margin-top: 40px; font-size: .875rem; color: var(--ink-2); }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <section class="intro">
+    <div>
+      <p class="label">CS2701 · Group B14 · Start-up 1 · SDG 14</p>
+      <h1>AquaBridge team hub</h1>
+      <p class="lede">The Sprint 1 front-end prototype, its guided demo flows, the design system and the detailed backlog, in one place.</p>
+    </div>
+    <img class="art" src="docs/assets/aquarium.svg" alt="Illustration of a planted aquarium with fish and a shrimp">
+  </section>
+
+  <div class="cards">
+    <a class="card main" href="prototype/">
+      <p class="label" style="color:#DDF3EC">Start here</p>
+      <h2>Open the prototype</h2>
+      <p class="muted">Click through both journeys with sample data.</p>
+      <span class="go">Open →</span>
+    </a>
+    <a class="card" href="prototype/#demos">
+      <p class="label">Walkthrough</p>
+      <h2>Demo flows</h2>
+      <p class="muted">Three guided demos: owner, adopter, decision and handover.</p>
+      <span class="go">Watch →</span>
+    </a>
+    <a class="card" href="backlog/">
+      <p class="label">Planning</p>
+      <h2>Sprint 1 backlog</h2>
+      <p class="muted">39 tickets with what to build, states and acceptance criteria.</p>
+      <span class="go">Read →</span>
+    </a>
+    <a class="card" href="prototype/#design">
+      <p class="label">Design</p>
+      <h2>Design system</h2>
+      <p class="muted">Coastal Trust colours, type, components and rules.</p>
+      <span class="go">View →</span>
+    </a>
+    <a class="card" href="prototype/#map">
+      <p class="label">Reference</p>
+      <h2>Screen map</h2>
+      <p class="muted">Every screen, its owner, tasks and backlog stories.</p>
+      <span class="go">View →</span>
+    </a>
+    <a class="card" href="https://dsouzashawn305.atlassian.net/jira/software/projects/KAN/boards" target="_blank" rel="noopener">
+      <p class="label">Tracking</p>
+      <h2>Jira board (KAN)</h2>
+      <p class="muted">Team members only. Ask Shawn for an invite.</p>
+      <span class="go">Open in Jira ↗</span>
+    </a>
+  </div>
+
+  <p class="note">Everything here uses sample data. Guidance and compatibility results are illustrative examples, not legal or biological advice.</p>
+  <footer>Shawn D’Souza (Product Owner) · Muhammad Farhan Ul Haque (Scrum Master) · Midhir Maru</footer>
+</main>
+</body>
+</html>

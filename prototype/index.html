@@ -1,0 +1,1770 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>AquaBridge Prototype</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Familjen+Grotesk:ital,wght@0,500;0,600;0,700;1,500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sticky header + one centred working column (max 1180px); screens swap inside <main>; two-pane layouts for editor, inbox and compatibility collapse to one column under 900px. */
+:root {
+  /* Palette "Coastal Trust" (light only): deep ocean ink, ocean teal actions, seafoam tints, coastal mist ground */
+  color-scheme: light;
+  --bg: #F4F8F7;          /* Coastal Mist: page ground */
+  --surface: #FFFFFF;     /* Cards, forms, panels */
+  --surface-2: #EAF3F0;   /* Quiet fills, table heads, build-notes strip */
+  --line: #D3E3DE;        /* Borders and dividers */
+  --ink: #12324A;         /* Deep Ocean: headings and body text */
+  --ink-2: #4E6677;       /* Secondary text */
+  --primary: #0B7A6E;     /* Ocean Teal: primary actions, links */
+  --primary-hover: #08635A;
+  --on-primary: #FFFFFF;
+  --primary-soft: #DDF3EC; /* Seafoam tint: selected states, info panels */
+  --weed: #5CC4A6;        /* Seafoam: logo wave and small highlights */
+  --weed-soft: #C9EFE2;
+  --ok: #1F7A4D;  --ok-soft: #DDF1E5;
+  --warn: #965A00; --warn-soft: #FCEFD5;
+  --bad: #B4352C;  --bad-soft: #FBE3E0;
+  --mute-soft: #E6EEEC;
+  --plate-trop: #D6EFE9; --plate-cold: #DEE8F2; --plate-plant: #E0EFD9; --plate-pond: #EDEBD5; --plate-ink: #12324A;
+  --focus: #0B7A6E;
+
+  --f-display: "Familjen Grotesk", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+
+  --t-xs: 0.8125rem; --t-sm: 0.9375rem; --t-md: 1rem; --t-lg: 1.25rem; --t-xl: 1.625rem; --t-2xl: 2.125rem; --t-3xl: clamp(2.25rem, 5vw, 3.25rem);
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px; --s8: 72px;
+  --r: 6px; --r-sm: 3px;
+  --maxw: 1180px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: var(--t-md); line-height: 1.55; -webkit-font-smoothing: antialiased; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+h1, h2, h3, h4 { font-family: var(--f-display); line-height: 1.15; margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
+h1 { font-size: var(--t-2xl); font-weight: 700; }
+h2 { font-size: var(--t-xl); font-weight: 650; }
+h3 { font-size: var(--t-lg); font-weight: 600; }
+p { margin: 0; }
+a { color: var(--primary); text-underline-offset: 3px; }
+a:hover { color: var(--primary-hover); }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
+.mono { font-family: var(--f-mono); font-size: 0.875em; font-variant-numeric: tabular-nums; }
+.muted { color: var(--ink-2); }
+.small { font-size: var(--t-sm); }
+.label { font-family: var(--f-mono); font-size: var(--t-xs); text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-2); }
+.wrap { max-width: var(--maxw); margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.skip { position: absolute; left: -9999px; }
+.skip:focus { left: 16px; top: 16px; z-index: 50; background: var(--surface); padding: var(--s2) var(--s3); }
+.stack { display: grid; gap: var(--s4); }
+.stack-lg { display: grid; gap: var(--s6); }
+.row { display: flex; flex-wrap: wrap; gap: var(--s3); align-items: center; }
+.between { justify-content: space-between; }
+
+/* Header */
+.site-head { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--surface); border-bottom: 1px solid var(--line); }
+.head-row { display: flex; align-items: center; gap: var(--s5); min-height: 64px; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); font-family: var(--f-display); font-weight: 700; font-size: 1.375rem; letter-spacing: -0.02em; }
+.brand svg { flex: none; }
+.brand:hover { color: var(--ink); }
+.nav { display: flex; align-items: center; gap: var(--s5); flex: 1; }
+.nav-main { display: flex; align-items: center; gap: var(--s1); }
+.nav-main a { font-family: var(--f-display); font-weight: 500; font-size: 1.0625rem; color: var(--ink); text-decoration: none; padding: 10px 14px; border-radius: var(--r-sm); }
+.nav-main a:hover { background: var(--surface-2); color: var(--ink); }
+.nav-main a[aria-current="page"] { color: var(--primary); box-shadow: inset 0 -3px 0 var(--primary); border-radius: 0; }
+.acct { display: flex; align-items: center; gap: var(--s2); margin-left: auto; }
+.acct .btn { font-size: 1rem; }
+.acct .btn-quiet { color: var(--ink); }
+.avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--primary-soft); color: var(--primary); display: grid; place-items: center; font-family: var(--f-display); font-weight: 700; font-size: 0.875rem; flex: none; }
+.dd { position: relative; }
+.dd-btn { display: flex; align-items: center; gap: 10px; font-family: var(--f-display); font-weight: 500; font-size: 1rem; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 4px 14px 4px 4px; cursor: pointer; }
+.dd-btn:hover, .dd-btn[aria-expanded="true"] { border-color: var(--ink-2); }
+.dd-btn[data-current] { border-color: var(--primary); }
+.dd-btn svg { transition: transform .15s; }
+.dd-btn[aria-expanded="true"] svg { transform: rotate(180deg); }
+.badge { min-width: 22px; height: 22px; padding: 0 7px; border-radius: 11px; background: var(--warn); color: #FFFFFF; font: 500 0.75rem/22px var(--f-mono); text-align: center; }
+.dd-panel { display: none; position: absolute; right: 0; top: calc(100% + 10px); width: 280px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); box-shadow: 0 14px 36px rgba(18, 50, 74, .14); padding: var(--s2); z-index: 30; }
+.dd-panel.open { display: grid; }
+.dd-who { padding: var(--s2) 12px var(--s3); border-bottom: 1px solid var(--line); font-size: var(--t-sm); color: var(--ink-2); }
+.dd-who strong { display: block; color: var(--ink); font-family: var(--f-display); font-size: 1.0625rem; font-weight: 600; }
+.dd-group { display: grid; padding: var(--s2) 0; border-bottom: 1px solid var(--line); }
+.dd-label { font-family: var(--f-mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: .1em; color: var(--ink-2); padding: 6px 12px 4px; }
+.dd-item { display: flex; justify-content: space-between; align-items: center; gap: var(--s2); width: 100%; padding: 10px 12px; border: 0; border-radius: var(--r-sm); background: none; color: var(--ink); font: inherit; font-size: 1rem; text-align: left; text-decoration: none; cursor: pointer; }
+.dd-item:hover { background: var(--surface-2); color: var(--ink); }
+.dd-item[aria-current="page"] { background: var(--primary-soft); color: var(--primary); font-weight: 700; }
+.dd-item small { display: block; font-size: var(--t-xs); color: var(--ink-2); font-weight: 400; }
+.dd-out { margin-top: var(--s1); color: var(--ink-2); }
+.btn.menu-btn { display: none; margin-left: auto; font-size: 1rem; }
+@media (max-width: 900px) {
+  .btn.menu-btn { display: inline-flex; }
+  .nav { display: none; position: absolute; left: 0; right: 0; top: 100%; background: var(--surface); border-bottom: 1px solid var(--line); box-shadow: 0 14px 30px rgba(18, 50, 74, .12); flex-direction: column; align-items: stretch; gap: var(--s2); padding: var(--s2) max(16px, env(safe-area-inset-right, 0px)) var(--s4) max(16px, env(safe-area-inset-left, 0px)); }
+  .nav.open { display: flex; }
+  .nav-main { flex-direction: column; align-items: stretch; }
+  .nav-main a { padding: 12px; }
+  .nav-main a[aria-current="page"] { box-shadow: inset 3px 0 0 var(--primary); background: var(--primary-soft); }
+  .acct { margin-left: 0; flex-direction: column; align-items: stretch; border-top: 1px solid var(--line); padding-top: var(--s3); }
+  .dd-btn { display: none; }
+  .dd-panel { display: grid; position: static; width: auto; border: 0; box-shadow: none; padding: 0; }
+}
+
+/* Build notes strip */
+.notes { background: var(--surface-2); border-bottom: 1px solid var(--line); font-family: var(--f-mono); font-size: var(--t-xs); color: var(--ink-2); }
+.notes .wrap { display: flex; flex-wrap: wrap; gap: 6px 24px; padding-block: 8px; }
+.notes b { color: var(--ink); font-weight: 500; }
+.notes .who { color: var(--primary); }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font: inherit; font-weight: 700; font-size: var(--t-sm); line-height: 1.2; padding: 11px 18px; border-radius: var(--r); border: 1px solid transparent; cursor: pointer; text-decoration: none; transition: background-color .15s, border-color .15s, color .15s; }
+.btn-primary { background: var(--primary); color: var(--on-primary); }
+.btn-primary:hover { background: var(--primary-hover); color: var(--on-primary); }
+.btn-secondary { background: var(--surface); color: var(--ink); border-color: var(--line); }
+.btn-secondary:hover { border-color: var(--ink-2); color: var(--ink); }
+.btn-quiet { background: transparent; color: var(--primary); padding-inline: 8px; }
+.btn-quiet:hover { background: var(--primary-soft); color: var(--primary); }
+.btn-danger { background: var(--surface); color: var(--bad); border-color: var(--bad); }
+.btn-danger:hover { background: var(--bad-soft); color: var(--bad); }
+.btn-sm { padding: 7px 12px; font-size: var(--t-xs); }
+.btn[disabled], .btn[aria-disabled="true"] { opacity: .45; cursor: not-allowed; }
+
+/* Chips: one shape for every contract status */
+.chip { display: inline-flex; align-items: center; gap: 6px; font-family: var(--f-mono); font-size: 0.75rem; font-weight: 500; letter-spacing: .02em; padding: 3px 9px 3px 8px; border-radius: 999px; white-space: nowrap; background: var(--mute-soft); color: var(--ink-2); }
+.chip::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.chip.ok { background: var(--ok-soft); color: var(--ok); }
+.chip.warn { background: var(--warn-soft); color: var(--warn); }
+.chip.bad { background: var(--bad-soft); color: var(--bad); }
+.chip.pri { background: var(--primary-soft); color: var(--primary); }
+.chip.plain::before { display: none; }
+
+/* Parameter readout — the test-kit strip used on cards and details */
+.params { display: flex; flex-wrap: wrap; gap: 6px; }
+.param { font-family: var(--f-mono); font-size: 0.75rem; border: 1px solid var(--line); border-radius: var(--r-sm); padding: 2px 7px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.param b { color: var(--ink); font-weight: 500; }
+
+/* Specimen plate */
+.plate { position: relative; display: flex; flex-direction: column; justify-content: flex-end; gap: 2px; padding: var(--s4); min-height: 132px; color: var(--plate-ink); overflow: hidden; }
+.plate.trop { background: var(--plate-trop); } .plate.cold { background: var(--plate-cold); } .plate.plant { background: var(--plate-plant); } .plate.pond { background: var(--plate-pond); }
+.plate .sci { font-family: var(--f-display); font-style: italic; font-weight: 500; font-size: 1.25rem; line-height: 1.15; max-width: 80%; }
+.plate .kind { font-family: var(--f-mono); font-size: 0.6875rem; text-transform: uppercase; letter-spacing: .1em; opacity: .8; }
+.plate svg { position: absolute; right: 12px; top: 12px; opacity: .55; }
+.plate .tag { position: absolute; left: var(--s4); top: var(--s4); }
+
+/* Listing cards */
+.grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--s5); }
+.lcard { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; text-decoration: none; color: var(--ink); transition: border-color .15s, transform .15s; }
+.lcard:hover { border-color: var(--primary); color: var(--ink); }
+.lcard .body { display: grid; gap: var(--s2); padding: var(--s4); flex: 1; align-content: start; }
+.lcard h3 { font-size: 1.125rem; }
+.lcard .meta { font-size: var(--t-sm); color: var(--ink-2); }
+.lcard .foot { display: flex; justify-content: space-between; align-items: center; gap: var(--s2); padding: var(--s3) var(--s4); border-top: 1px solid var(--line); font-size: var(--t-xs); color: var(--ink-2); }
+@media (prefers-reduced-motion: no-preference) { .lcard:hover { transform: translateY(-2px); } }
+
+/* Panels and forms */
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: var(--s5); }
+.panel-quiet { background: var(--surface-2); border-radius: var(--r); padding: var(--s4) var(--s5); }
+.field { display: grid; gap: 6px; }
+.field > label, .field legend { font-weight: 700; font-size: var(--t-sm); }
+.field .hint { font-size: var(--t-xs); color: var(--ink-2); }
+.req { color: var(--bad); font-weight: 400; }
+input[type=text], input[type=email], input[type=password], input[type=number], select, textarea {
+  font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-sm); padding: 10px 12px; width: 100%; min-width: 0;
+}
+input:hover, select:hover, textarea:hover { border-color: var(--ink-2); }
+textarea { min-height: 112px; resize: vertical; }
+.field.has-error input, .field.has-error select, .field.has-error textarea { border-color: var(--bad); box-shadow: 0 0 0 1px var(--bad); }
+.err { color: var(--bad); font-size: var(--t-xs); font-weight: 700; }
+fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s4) var(--s5); }
+.form-grid .full { grid-column: 1 / -1; }
+@media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } }
+.choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--s3); }
+.choice { position: relative; display: grid; gap: 4px; padding: var(--s4); border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); cursor: pointer; }
+.choice input { position: absolute; opacity: 0; pointer-events: none; }
+.choice strong { font-family: var(--f-display); font-size: 1.0625rem; font-weight: 600; }
+.choice span { font-size: var(--t-sm); color: var(--ink-2); }
+.choice:has(input:checked) { border-color: var(--primary); box-shadow: inset 0 0 0 1px var(--primary); background: var(--primary-soft); }
+.choice:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 2px; }
+.check { display: flex; gap: 10px; align-items: flex-start; font-size: var(--t-sm); }
+.check input { margin-top: 4px; width: 18px; height: 18px; accent-color: var(--primary); }
+
+/* Notices */
+.notice { display: grid; gap: 4px; padding: var(--s3) var(--s4); border-radius: var(--r); border: 1px solid var(--line); background: var(--surface-2); font-size: var(--t-sm); }
+.notice.pri { background: var(--primary-soft); border-color: transparent; }
+.notice.warn { background: var(--warn-soft); border-color: transparent; }
+.notice.bad { background: var(--bad-soft); border-color: transparent; }
+.notice.ok { background: var(--ok-soft); border-color: transparent; }
+.notice strong { font-family: var(--f-display); font-size: var(--t-md); }
+
+/* Page heads */
+.page { padding-block: var(--s6) var(--s8); }
+.page-head { display: grid; gap: var(--s2); margin-bottom: var(--s6); }
+.page-head p { max-width: 62ch; color: var(--ink-2); }
+.page-head.row { display: flex; }
+.crumb { font-size: var(--t-sm); }
+.crumb a { text-decoration: none; }
+
+/* Home */
+.hero-wrap { background: var(--surface); border-bottom: 1px solid var(--line); }
+.hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: var(--s6); align-items: center; padding-block: var(--s6) var(--s7); }
+.hero h1 { font-size: var(--t-3xl); line-height: 1.06; letter-spacing: -0.025em; max-width: 15ch; margin-top: var(--s3); }
+.hero h1 em { font-style: normal; color: var(--primary); }
+.hero .lede { font-size: 1.1875rem; line-height: 1.6; color: var(--ink-2); max-width: 44ch; margin-top: var(--s4); }
+.hero-ctas { display: flex; flex-wrap: wrap; gap: var(--s3); margin-top: var(--s5); }
+.btn-lg { padding: 15px 22px; font-size: 1.0625rem; }
+.assure { list-style: none; padding: 0; margin: var(--s5) 0 0; display: flex; flex-wrap: wrap; gap: var(--s2) var(--s5); font-size: var(--t-sm); color: var(--ink-2); }
+.assure li { display: flex; align-items: center; gap: 8px; }
+.assure li::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--weed); flex: none; }
+.hero-art { display: block; width: 100%; height: auto; max-width: 580px; justify-self: end; }
+@media (max-width: 860px) { .hero { grid-template-columns: 1fr; gap: var(--s4); padding-block: var(--s4) var(--s6); } .hero-art { justify-self: center; max-width: 460px; } }
+@media (prefers-reduced-motion: no-preference) {
+  .swim-a { animation: bob 6s ease-in-out infinite; }
+  .swim-b { animation: bob 4.6s ease-in-out -1.2s infinite; }
+  .swim-c { animation: bob 5.4s ease-in-out -2.6s infinite; }
+  .sway { transform-box: fill-box; transform-origin: 50% 100%; animation: sway 7s ease-in-out infinite; }
+  .sway-2 { animation-delay: -3s; }
+  .bub { transform-box: fill-box; animation: rise 3.6s linear infinite; }
+  .bub:nth-of-type(2) { animation-delay: -0.7s; } .bub:nth-of-type(3) { animation-delay: -1.4s; } .bub:nth-of-type(4) { animation-delay: -2.1s; } .bub:nth-of-type(5) { animation-delay: -2.8s; }
+}
+@keyframes bob { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(12px, -7px); } }
+@keyframes sway { 0%, 100% { transform: rotate(-2.5deg); } 50% { transform: rotate(2.5deg); } }
+@keyframes rise { 0% { transform: translateY(0); opacity: .95; } 100% { transform: translateY(-34px); opacity: .15; } }
+.how { padding-block: var(--s7); }
+.path-card { display: grid; gap: var(--s4); align-content: start; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: var(--s5); }
+.path-card .steps { margin-top: 0; }
+.path-card .btn { justify-self: start; }
+.band { background: var(--ink); color: #FFFFFF; }
+.band .btn-secondary { background: transparent; color: #FFFFFF; border-color: rgba(255,255,255,.5); }
+.band .btn-secondary:hover { border-color: #FFFFFF; color: #FFFFFF; }
+.band .wrap { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--s5); align-items: center; padding-block: var(--s5); }
+.band p { max-width: 70ch; }
+.band .sdg { font-family: var(--f-mono); font-size: var(--t-xs); text-transform: uppercase; letter-spacing: .1em; border: 1px solid currentColor; padding: 4px 8px; border-radius: var(--r-sm); white-space: nowrap; }
+@media (max-width: 700px) { .band .wrap { grid-template-columns: 1fr; gap: var(--s3); } }
+.journeys { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s7); padding-block: var(--s7); }
+@media (max-width: 760px) { .journeys { grid-template-columns: 1fr; gap: var(--s6); } }
+.steps { list-style: none; padding: 0; margin: var(--s4) 0 0; display: grid; gap: 0; counter-reset: s; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 36px 1fr; gap: var(--s3); padding: var(--s3) 0; border-top: 1px solid var(--line); }
+.steps li::before { content: counter(s); font-family: var(--f-mono); font-size: var(--t-sm); color: var(--primary); padding-top: 1px; }
+.steps b { font-family: var(--f-display); font-weight: 600; }
+.steps p { color: var(--ink-2); font-size: var(--t-sm); }
+
+/* Questionnaire */
+.progress { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; list-style: none; padding: 0; margin: 0 0 var(--s5); }
+.progress li { display: grid; gap: 6px; font-size: var(--t-xs); color: var(--ink-2); }
+.progress li::before { content: ""; height: 4px; border-radius: 2px; background: var(--line); }
+.progress li.done::before, .progress li.now::before { background: var(--primary); }
+.progress li.now { color: var(--ink); font-weight: 700; }
+@media (max-width: 560px) { .progress li span { display: none; } .progress li.now span { display: inline; } }
+.qwrap { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: var(--s6); align-items: start; }
+@media (max-width: 900px) { .qwrap { grid-template-columns: 1fr; } }
+.form-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s3); padding-top: var(--s5); margin-top: var(--s5); border-top: 1px solid var(--line); }
+.care { display: grid; gap: var(--s3); }
+.care dl { display: grid; grid-template-columns: auto 1fr; gap: 6px var(--s4); margin: 0; font-size: var(--t-sm); }
+.care dt { color: var(--ink-2); }
+.care dd { margin: 0; font-family: var(--f-mono); font-size: 0.8125rem; }
+
+/* Review table */
+.review { width: 100%; border-collapse: collapse; }
+.review th, .review td { text-align: left; padding: var(--s3) var(--s3) var(--s3) 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+.review th { width: 34%; font-weight: 400; color: var(--ink-2); font-size: var(--t-sm); }
+.review-group { display: flex; justify-content: space-between; align-items: center; margin-top: var(--s5); }
+
+/* Outcome */
+.outcome { display: grid; grid-template-columns: 6px 1fr; border-radius: var(--r); overflow: hidden; border: 1px solid var(--line); background: var(--surface); }
+.outcome::before { content: ""; background: var(--ok); }
+.outcome.warn::before { background: var(--warn); }
+.outcome.bad::before { background: var(--bad); }
+.outcome > div { padding: var(--s5); display: grid; gap: var(--s3); }
+.outcome h2 { font-size: var(--t-2xl); }
+.reasons { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; }
+
+/* Two-pane */
+.two { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: var(--s6); align-items: start; }
+.two-rev { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: var(--s5); align-items: start; }
+@media (max-width: 900px) { .two, .two-rev { grid-template-columns: 1fr; } }
+.sticky { position: sticky; top: 96px; }
+@media (max-width: 900px) { .sticky { position: static; } }
+
+/* Detail */
+.detail-plate { border-radius: var(--r); min-height: 220px; }
+.detail-plate .sci { font-size: 1.75rem; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+.facts div { background: var(--surface); padding: var(--s3) var(--s4); display: grid; gap: 2px; }
+.facts b { font-family: var(--f-display); font-weight: 600; font-size: 1.0625rem; }
+
+/* Tables / lists */
+.tbl-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); }
+.tbl { width: 100%; border-collapse: collapse; font-size: var(--t-sm); min-width: 680px; }
+.tbl th { text-align: left; font-family: var(--f-mono); font-size: 0.6875rem; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-2); font-weight: 500; background: var(--surface-2); padding: 10px var(--s4); }
+.tbl td { padding: var(--s3) var(--s4); border-top: 1px solid var(--line); vertical-align: middle; }
+.tbl td.actions-cell { text-align: right; white-space: nowrap; }
+.tbl .t-title { font-weight: 700; }
+.tabs { display: flex; gap: var(--s1); flex-wrap: wrap; border-bottom: 1px solid var(--line); margin-bottom: var(--s5); }
+.tabs button { font: inherit; font-size: var(--t-sm); background: none; border: 0; padding: 10px 12px; color: var(--ink-2); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.tabs button[aria-selected="true"] { color: var(--ink); border-color: var(--primary); font-weight: 700; }
+.tabs .count { font-family: var(--f-mono); font-size: 0.75rem; color: var(--ink-2); margin-left: 4px; }
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s3); margin-bottom: var(--s5); }
+.stat { padding: var(--s3) var(--s4); background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); display: grid; gap: 2px; }
+.stat b { font-family: var(--f-display); font-size: var(--t-xl); font-variant-numeric: tabular-nums; }
+@media (max-width: 640px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.rlist { display: grid; gap: 0; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); overflow: hidden; }
+.rlist button { display: grid; gap: 4px; text-align: left; font: inherit; color: inherit; background: none; border: 0; border-top: 1px solid var(--line); padding: var(--s3) var(--s4); cursor: pointer; }
+.rlist button:first-child { border-top: 0; }
+.rlist button[aria-current="true"] { background: var(--primary-soft); box-shadow: inset 3px 0 0 var(--primary); }
+.rlist .grp { padding: 8px var(--s4); background: var(--surface-2); border-top: 1px solid var(--line); }
+.rlist .grp:first-child { border-top: 0; }
+
+/* Handover tracker */
+.track { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; }
+.track li { position: relative; display: grid; gap: 6px; padding-top: 22px; font-size: var(--t-xs); color: var(--ink-2); }
+.track li::before { content: ""; position: absolute; top: 5px; left: 0; right: 0; height: 2px; background: var(--line); }
+.track li::after { content: ""; position: absolute; top: 0; left: 0; width: 12px; height: 12px; border-radius: 50%; background: var(--surface); border: 2px solid var(--line); }
+.track li.done { color: var(--ink); }
+.track li.done::before { background: var(--primary); }
+.track li.done::after { background: var(--primary); border-color: var(--primary); }
+.track li.now::after { border-color: var(--primary); }
+.track li.now { color: var(--ink); font-weight: 700; }
+@media (max-width: 520px) { .track { grid-template-columns: 1fr; gap: var(--s2); } .track li { padding: 0 0 0 24px; } .track li::before { display: none; } }
+
+/* Compatibility */
+.crit { display: grid; gap: 0; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); }
+.crit-row { display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; gap: var(--s3); padding: var(--s4); border-top: 1px solid var(--line); align-items: start; }
+.crit-row:first-child { border-top: 0; }
+.crit-row .ico { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 0.8125rem; }
+.ico.pass { background: var(--ok-soft); color: var(--ok); } .ico.fail { background: var(--bad-soft); color: var(--bad); } .ico.missing { background: var(--warn-soft); color: var(--warn); } .ico.advice { background: var(--primary-soft); color: var(--primary); }
+.crit-row .what { display: grid; gap: 6px; min-width: 0; }
+.crit-row .what b { font-family: var(--f-display); font-weight: 600; }
+.rbar { position: relative; height: 26px; margin-top: 4px; }
+.rbar .trk { position: absolute; left: 0; right: 0; top: 10px; height: 6px; border-radius: 3px; background: var(--surface-2); }
+.rbar .ok-range { position: absolute; top: 8px; height: 10px; border-radius: 3px; background: var(--primary-soft); border: 1px solid var(--primary); }
+.rbar .hab { position: absolute; top: 3px; height: 20px; min-width: 4px; border-radius: 2px; background: var(--ok); opacity: .9; }
+.rbar .hab.fail { background: var(--bad); }
+.rbar-scale { display: flex; justify-content: space-between; font-family: var(--f-mono); font-size: 0.6875rem; color: var(--ink-2); }
+.legend { display: flex; flex-wrap: wrap; gap: var(--s4); font-size: var(--t-xs); color: var(--ink-2); }
+.legend i { display: inline-block; width: 14px; height: 8px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+
+/* Habitat cards */
+.hcards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--s4); }
+.hcard { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: var(--s4) var(--s5); display: grid; gap: var(--s3); }
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 4px var(--s4); margin: 0; font-size: var(--t-sm); }
+.kv dt { color: var(--ink-2); }
+.kv dd { margin: 0; font-family: var(--f-mono); font-size: 0.8125rem; font-variant-numeric: tabular-nums; }
+
+/* Design system page */
+.swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--s4); }
+.sw { border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; background: var(--surface); }
+.sw .chipc { height: 84px; border-bottom: 1px solid var(--line); }
+.sw .info { padding: var(--s3); display: grid; gap: 2px; font-size: var(--t-sm); }
+.sw .info .mono { color: var(--ink-2); }
+.spec { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: var(--s4); padding: var(--s4) 0; border-top: 1px solid var(--line); align-items: baseline; }
+@media (max-width: 640px) { .spec { grid-template-columns: 1fr; gap: var(--s2); } }
+.dont { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--s4); }
+.dont div { padding: var(--s4); border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); display: grid; gap: 4px; font-size: var(--t-sm); }
+.dont b { font-family: var(--f-display); font-size: var(--t-md); }
+
+/* Footer, toast */
+.site-foot { border-top: 1px solid var(--line); background: var(--surface); font-size: var(--t-sm); color: var(--ink-2); }
+.site-foot .wrap { display: flex; flex-wrap: wrap; gap: var(--s4) var(--s6); justify-content: space-between; padding-block: var(--s5); }
+.site-foot nav { display: flex; flex-wrap: wrap; gap: var(--s4); }
+.toast { position: fixed; z-index: 40; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 12px 18px; border-radius: var(--r); font-size: var(--t-sm); font-weight: 700; max-width: calc(100% - 32px); box-shadow: 0 8px 24px rgba(0,0,0,.18); }
+.empty { padding: var(--s6); text-align: center; border: 1px dashed var(--line); border-radius: var(--r); color: var(--ink-2); display: grid; gap: var(--s3); justify-items: center; }
+.toolbar { display: flex; flex-wrap: wrap; gap: var(--s3); align-items: end; margin-bottom: var(--s5); }
+.toolbar .field { flex: 1 1 200px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; background: var(--surface); }
+.seg button { font: inherit; font-size: var(--t-sm); padding: 9px 14px; background: none; border: 0; border-left: 1px solid var(--line); color: var(--ink-2); cursor: pointer; }
+.seg button:first-child { border-left: 0; }
+.seg button[aria-pressed="true"] { background: var(--primary-soft); color: var(--primary); font-weight: 700; }
+.demo { border: 1px dashed var(--warn); border-radius: var(--r); padding: var(--s3) var(--s4); display: grid; gap: var(--s2); background: var(--warn-soft); font-size: var(--t-sm); }
+.demo .label { color: var(--warn); }
+.confirm-inline { display: inline-flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: var(--t-xs); }
+.map-tbl td:first-child { font-weight: 700; }
+.demo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--s5); align-items: start; }
+.demo-grid h2 { font-size: var(--t-xl); }
+.tour { position: fixed; z-index: 45; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); width: min(390px, calc(100% - 32px)); max-height: min(72vh, 580px); overflow: auto; display: grid; gap: var(--s3); padding: var(--s4) var(--s5); background: var(--surface); border: 1px solid var(--line); border-top: 4px solid var(--primary); border-radius: var(--r); box-shadow: 0 18px 48px rgba(18, 50, 74, .22); }
+.tour h3 { font-size: 1.1875rem; }
+.tour-top { display: flex; justify-content: space-between; align-items: center; }
+.tour-prog { height: 4px; border-radius: 2px; background: var(--surface-2); overflow: hidden; }
+.tour-prog span { display: block; height: 100%; background: var(--primary); transition: width .25s; }
+.tour-sys { display: grid; gap: 6px; padding: var(--s3); border-radius: var(--r-sm); background: var(--surface-2); font-size: var(--t-sm); }
+.tour-sys code { font-family: var(--f-mono); font-size: .8125rem; background: var(--surface); padding: 1px 5px; border-radius: 3px; overflow-wrap: anywhere; }
+.tour-who { font-family: var(--f-mono); font-size: .75rem; color: var(--primary); }
+.tour-pill { position: fixed; z-index: 45; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); box-shadow: 0 10px 28px rgba(18, 50, 74, .25); max-width: calc(100% - 32px); }
+body.touring main { padding-bottom: 360px; }
+.tour-hl { outline: 3px solid var(--weed) !important; outline-offset: 4px; border-radius: 4px; }
+@media (prefers-reduced-motion: no-preference) { .tour-hl { animation: hl 1.4s ease-in-out 3; } }
+@keyframes hl { 50% { outline-offset: 9px; } }
+@media (max-width: 640px) { .tour { left: max(16px, env(safe-area-inset-left, 0px)); width: auto; max-height: 50vh; } body.touring main { padding-bottom: 52vh; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-head" id="head"></header>
+<div id="notes"></div>
+<main id="main" tabindex="-1"></main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="stack" style="gap:4px">
+      <strong style="color:var(--ink)">AquaBridge Sprint 1 prototype</strong>
+      <span>Uses sample data only. Guidance and compatibility results are illustrative, not legal or biological advice.</span>
+    </div>
+    <nav aria-label="Prototype tools">
+      <a href="#demos" data-go="demos">Demo flows</a>
+      <a href="#map" data-go="map">Screen map</a>
+      <a href="#design" data-go="design">Design system</a>
+      <a href="#" data-act="toggleNotes" id="notesToggle">Hide build notes</a>
+      <a href="#" data-act="reset">Reset sample data</a>
+    </nav>
+  </div>
+</footer>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<div id="tour"></div>
+
+<script>
+/* ---------- Shared mock contracts (agreed IDs and status values) ---------- */
+const LISTING_STATUS = ['draft','active','reserved','rehomed','withdrawn'];
+const REQUEST_STATUS = ['pending','accepted','declined','withdrawn','completed'];
+const COMPAT_OUTCOME = ['potential_match','needs_information','blocked'];
+
+const SPECIES = {
+  'SP-001': { common:'Fancy goldfish', sci:'Carassius auratus', kind:'animal', group:'cold', habitats:['aquarium'], temp:[10,24], ph:[7.0,8.0], minVol:110, filter:true, cycled:true, status:'supported', care:'Coldwater fish that produce a lot of waste. Needs strong filtration and weekly partial water changes. Fancy varieties do better indoors than in ponds.' },
+  'SP-002': { common:'Neon tetra', sci:'Paracheirodon innesi', kind:'animal', group:'trop', habitats:['aquarium'], temp:[20,26], ph:[6.0,7.0], minVol:54, filter:true, cycled:true, status:'supported', care:'Shoaling fish. Keep in groups of six or more in a heated, planted tank with soft water.' },
+  'SP-003': { common:'Cherry shrimp', sci:'Neocaridina davidi', kind:'animal', group:'trop', habitats:['aquarium'], temp:[18,26], ph:[6.5,8.0], minVol:20, filter:true, cycled:true, status:'supported', care:'Peaceful and hardy. Sensitive to copper-based medicines and to sudden changes in water chemistry.' },
+  'SP-004': { common:'White Cloud Mountain minnow', sci:'Tanichthys albonubes', kind:'animal', group:'cold', habitats:['aquarium'], temp:[14,22], ph:[6.5,8.0], minVol:60, filter:true, cycled:true, status:'supported', care:'Coldwater shoaling fish. Does not need a heater in most UK homes. Keep in groups of six or more.' },
+  'SP-005': { common:'Java fern', sci:'Microsorum pteropus', kind:'plant', group:'plant', habitats:['aquarium'], temp:[18,28], ph:[6.0,7.5], minVol:20, light:'low', status:'supported', care:'Slow-growing. Tie the rhizome to wood or rock; burying it in gravel causes rot.' },
+  'SP-006': { common:'Hornwort', sci:'Ceratophyllum demersum', kind:'plant', group:'plant', habitats:['aquarium','pond'], temp:[4,28], ph:[6.0,8.0], minVol:20, light:'medium', status:'supported', care:'Native to the UK. Fast-growing oxygenator that can float or be anchored.' },
+  'SP-007': { common:'Hardy water lily', sci:'Nymphaea (hardy cultivars)', kind:'plant', group:'pond', habitats:['pond'], temp:[4,30], ph:[6.5,8.0], minVol:500, minDepth:30, light:'high', status:'supported', care:'Pond only. Plant in an aquatic basket 30 to 90 cm deep, in full sun.' },
+  'SP-008': { common:'Red-eared slider', sci:'Trachemys scripta elegans', kind:'animal', group:'cold', status:'restricted', care:'Example restricted species. Listed as an invasive species of special concern in England and Wales; selling, exchanging and releasing it are restricted.' },
+  'SP-009': { common:"Parrot's feather", sci:'Myriophyllum aquaticum', kind:'plant', group:'plant', status:'restricted', care:'Example restricted species. Listed as an invasive non-native plant in England and Wales and banned from sale.' },
+  'SP-000': { common:"I'm not sure what it is", sci:'Unidentified', kind:'any', group:'cold', status:'unknown', care:'We cannot give care guidance until the organism is identified.' },
+};
+const USERS = {
+  'U-01': { name:'Jordan Lee', short:'Jordan L.' },
+  'U-03': { name:'Priya Nair', short:'Priya N.' },
+  'U-04': { name:'Tom Hughes', short:'Tom H.' },
+  'U-05': { name:'Aisha Bello', short:'Aisha B.' },
+  'U-06': { name:'Daniel Kerr', short:'Daniel K.' },
+};
+const ME = 'U-01';
+
+function seed() {
+  return {
+    user: null, notes: true, pending: null,
+    intake: { step: 1, answers: {} , outcome: null },
+    seq: { listing: 1051, request: 512, habitat: 204, intake: 301 },
+    listings: [
+      { id:'L-1042', owner:'U-01', speciesId:'SP-001', title:'Pair of oranda goldfish', qty:2, location:'Uxbridge, UB8', condition:'healthy', urgency:'month', status:'active', created:'21 Oct 2026', intakeId:'IC-288',
+        description:'Two orandas, about four years old, eating well and active. I am moving into a flat where I cannot keep a large tank. They have lived together since they were small and should go together.', careNotes:'Fed twice a day on sinking pellets with peas once a week. Kept at 20°C with a canister filter.' },
+      { id:'L-1043', owner:'U-03', speciesId:'SP-003', title:'Cherry shrimp colony, around 30', qty:30, location:'Ealing, W5', condition:'healthy', urgency:'flexible', status:'reserved', created:'14 Oct 2026',
+        description:'A thriving colony that has outgrown my nano tank. Mixed ages, mostly red with a few wild-coloured.', careNotes:'Moss and Indian almond leaves. No copper medicines ever used in the tank.' },
+      { id:'L-1044', owner:'U-05', speciesId:'SP-005', title:'Three Java fern on driftwood', qty:3, location:'Reading, RG1', condition:'healthy', urgency:'flexible', status:'active', created:'29 Oct 2026',
+        description:'Three well-established ferns, each attached to a small piece of driftwood. Ready to drop into a tank.', careNotes:'Low light, no CO2. Trim old brown leaves now and then.' },
+      { id:'L-1045', owner:'U-04', speciesId:'SP-002', title:'School of eight neon tetras', qty:8, location:'Slough, SL1', condition:'healthy', urgency:'week', status:'active', created:'1 Nov 2026',
+        description:'Eight neons from my community tank. I am emigrating in two weeks and need them to go to a cycled tropical tank.', careNotes:'Kept at 24°C, pH around 6.6. Fed flake and frozen daphnia.' },
+      { id:'L-1046', owner:'U-06', speciesId:'SP-007', title:'Pink hardy water lily', qty:1, location:'Watford, WD17', condition:'minor', urgency:'month', status:'active', created:'27 Oct 2026',
+        description:'Splitting a large lily from my pond. Comes in its basket. A few leaves have aphid damage, which is common and harmless.', careNotes:'Was planted at 50 cm depth in full sun.' },
+      { id:'L-1049', owner:'U-03', speciesId:'SP-004', title:'Ten young White Cloud minnows', qty:10, location:'Hillingdon, UB10', condition:'healthy', urgency:'month', status:'active', created:'2 Nov 2026',
+        description:'Juveniles bred in my coldwater tank, about 2 cm long. Looking for one home that will keep them as a group.', careNotes:'Unheated tank, 16–20°C. Eat crushed flake and baby brine shrimp.' },
+      { id:'L-1050', owner:'U-06', speciesId:'SP-006', title:'Hornwort bunches from pond clear-out', qty:6, location:'Hayes, UB3', condition:'healthy', urgency:'week', status:'active', created:'30 Oct 2026',
+        description:'Six generous bunches of native hornwort. Rinsed and checked for snails.', careNotes:'Grows fast in sun. Can float or be weighted down.' },
+      { id:'L-1047', owner:'U-01', speciesId:'SP-004', title:'Six adult White Cloud minnows', qty:6, location:'Uxbridge, UB8', condition:'healthy', urgency:'month', status:'reserved', created:'9 Oct 2026',
+        description:'Six adults from my coldwater tank. Peaceful and easy.', careNotes:'Unheated, 18°C. Fed flake.' },
+      { id:'L-1048', owner:'U-01', speciesId:'SP-005', title:'Java fern cuttings', qty:4, location:'Uxbridge, UB8', condition:'healthy', urgency:'flexible', status:'draft', created:'2 Nov 2026',
+        description:'Four plantlets taken from a mother plant.', careNotes:'' },
+      { id:'L-1039', owner:'U-01', speciesId:'SP-006', title:'Hornwort from tank trim', qty:5, location:'Uxbridge, UB8', condition:'healthy', urgency:'flexible', status:'rehomed', created:'2 Oct 2026',
+        description:'Spare hornwort.', careNotes:'' },
+    ],
+    habitats: [
+      { id:'H-201', owner:'U-01', name:'Living room tropical tank', type:'aquarium', volume:120, tempMin:24, tempMax:26, ph:6.8, filter:'yes', cycled:'yes', depth:'', light:'medium', inhabitants:'6 harlequin rasboras, 2 nerite snails' },
+      { id:'H-202', owner:'U-01', name:'Back garden pond', type:'pond', volume:1800, tempMin:4, tempMax:22, ph:7.6, filter:'yes', cycled:'yes', depth:60, light:'high', inhabitants:'Native frogs visit; no fish' },
+      { id:'H-203', owner:'U-01', name:'Bedroom nano tank', type:'aquarium', volume:30, tempMin:22, tempMax:23, ph:'', filter:'yes', cycled:'unsure', depth:'', light:'low', inhabitants:'Empty, set up last week' },
+    ],
+    requests: [
+      { id:'R-501', listingId:'L-1042', adopter:'U-03', habitatId:'H-9031', compat:'potential_match', status:'pending', ownerConfirmed:false, adopterConfirmed:false, created:'28 Oct 2026',
+        intro:'Hi Jordan, I keep fancy goldfish already and have a spare 180 litre tank that has been running for a year. Happy to collect from Uxbridge any weekend.',
+        summary:{ type:'aquarium', volume:180, tempMin:18, tempMax:21, ph:7.4, filter:'yes', cycled:'yes', inhabitants:'2 ryukin goldfish' } },
+      { id:'R-502', listingId:'L-1042', adopter:'U-04', habitatId:'H-9044', compat:'potential_match', status:'pending', ownerConfirmed:false, adopterConfirmed:false, created:'31 Oct 2026',
+        intro:'Hello, I am setting these up as the first fish in a new 125 litre coldwater tank. It has been cycling for six weeks.',
+        summary:{ type:'aquarium', volume:125, tempMin:19, tempMax:22, ph:7.2, filter:'yes', cycled:'yes', inhabitants:'None yet' } },
+      { id:'R-503', listingId:'L-1047', adopter:'U-05', habitatId:'H-9050', compat:'potential_match', status:'accepted', ownerConfirmed:false, adopterConfirmed:true, created:'12 Oct 2026',
+        intro:'I would love these for my unheated planted tank in the spare room.',
+        summary:{ type:'aquarium', volume:80, tempMin:17, tempMax:20, ph:7.0, filter:'yes', cycled:'yes', inhabitants:'Cherry shrimp' } },
+      { id:'R-510', listingId:'L-1045', adopter:'U-01', habitatId:'H-201', compat:'potential_match', status:'pending', ownerConfirmed:false, adopterConfirmed:false, created:'2 Nov 2026',
+        intro:'Hi Tom, my 120 litre tank is heated to 25°C with soft water and only has a small group of rasboras. Happy to collect from Slough this week.' },
+      { id:'R-511', listingId:'L-1043', adopter:'U-01', habitatId:'H-201', compat:'potential_match', status:'accepted', ownerConfirmed:true, adopterConfirmed:false, created:'16 Oct 2026',
+        intro:'Hi Priya, I would like some shrimp for my planted tropical tank. No copper medicines used.' },
+      { id:'R-508', listingId:'L-1044', adopter:'U-01', habitatId:'H-201', compat:'potential_match', status:'declined', ownerConfirmed:false, adopterConfirmed:false, created:'30 Oct 2026',
+        intro:'Hello, these would go on the driftwood in my tropical tank.' },
+    ],
+  };
+}
+// Owner-safe summaries for Jordan's own submitted requests
+function safeSummary(h) { return { type:h.type, volume:h.volume, tempMin:h.tempMin, tempMax:h.tempMax, ph:h.ph, filter:h.filter, cycled:h.cycled, depth:h.depth, inhabitants:h.inhabitants }; }
+
+const KEY = 'aquabridge-prototype-v1';
+let S;
+try { S = JSON.parse(localStorage.getItem(KEY)) || seed(); } catch (e) { S = seed(); }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+
+/* ---------- Helpers ---------- */
+const $ = (sel, root = document) => root.querySelector(sel);
+const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const today = () => new Date(2026, 10, 3).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+const L = id => S.listings.find(l => l.id === id);
+const H = id => S.habitats.find(h => h.id === id);
+const R = id => S.requests.find(r => r.id === id);
+const sp = l => SPECIES[l.speciesId] || SPECIES['SP-000'];
+const blank = v => v === '' || v === null || v === undefined || (typeof v === 'number' && isNaN(v));
+const CONDITION = { healthy:'Healthy', minor:'Minor issues', unwell:'Unwell or under treatment' };
+const URGENCY = { week:'Within a week', month:'Within a month', flexible:'No rush' };
+const REASON = { moving:'Moving home', closing:'Closing down the tank or pond', outgrown:'Outgrown the setup', time:'No longer have time', other:'Something else' };
+const GROUP_LABEL = { trop:'Tropical', cold:'Coldwater', plant:'Aquarium plant', pond:'Pond plant' };
+
+function chip(status) {
+  const map = { draft:'', active:'ok', reserved:'warn', rehomed:'pri', withdrawn:'',
+    pending:'warn', accepted:'pri', declined:'bad', completed:'ok',
+    potential_match:'ok', needs_information:'warn', blocked:'bad', eligible:'ok', needs_review:'warn', restricted:'bad' };
+  return `<span class="chip ${map[status] ?? ''}">${esc(status.replace('_',' '))}</span>`;
+}
+const GLYPH = {
+  animal: `<svg width="56" height="32" viewBox="0 0 56 32" fill="none" aria-hidden="true"><path d="M4 16c8-11 26-13 36-2l12-8v20l-12-8C30 29 12 27 4 16Z" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="14" cy="14" r="1.8" fill="currentColor"/></svg>`,
+  plant: `<svg width="40" height="44" viewBox="0 0 40 44" fill="none" aria-hidden="true"><path d="M20 42V12M20 30c-8 0-14-6-14-14 8 0 14 6 14 14Zm0-8c8 0 14-6 14-14-8 0-14 6-14 14Z" stroke="currentColor" stroke-width="2" fill="none"/></svg>`,
+};
+function plate(s, extraClass = '', tag = '') {
+  return `<div class="plate ${s.group} ${extraClass}">${GLYPH[s.kind === 'plant' ? 'plant' : 'animal']}${tag ? `<span class="tag">${tag}</span>` : ''}<span class="kind">${s.kind === 'plant' ? 'Plant' : 'Animal'} · ${GROUP_LABEL[s.group] || ''}</span><span class="sci">${esc(s.sci)}</span></div>`;
+}
+function params(s) {
+  if (!s.temp) return '';
+  return `<div class="params"><span class="param"><b>${s.temp[0]}–${s.temp[1]}</b> °C</span><span class="param">pH <b>${s.ph[0].toFixed(1)}–${s.ph[1].toFixed(1)}</b></span><span class="param">≥ <b>${s.minVol}</b> L</span>${s.habitats ? `<span class="param">${s.habitats.join(' / ')}</span>` : ''}</div>`;
+}
+// Public thumbnail: just enough to decide whether to open it. Care ranges, quantity, condition and IDs live on the detail page.
+const town = loc => String(loc || '').split(',')[0].trim() || 'Location not set';
+function card(l) {
+  const s = sp(l);
+  const mine = S.user && l.owner === S.user;
+  const tag = mine ? '<span class="chip pri plain">Your listing</span>' : l.urgency === 'week' ? '<span class="chip warn plain">Needs a home soon</span>' : '';
+  return `<a class="lcard" href="#listing" data-go="listing" data-id="${l.id}">
+    ${plate(s)}
+    <div class="body">
+      <h3>${esc(l.title || 'Untitled listing')}</h3>
+      <p class="meta">${s.kind === 'plant' ? 'Plant' : 'Animal'} · ${esc(town(l.location))}</p>
+    </div>
+    <div class="foot"><span>Listed ${esc(l.created)}</span>${tag}</div>
+  </a>`;
+}
+
+/* ---------- Mock Requests service (S-08): the one place request state changes ---------- */
+const RequestService = {
+  submit({ listingId, adopterId, habitatId, intro, compat }) {
+    const l = L(listingId);
+    if (!l || l.status !== 'active') throw new Error('This listing is no longer accepting requests.');
+    if (l.owner === adopterId) throw new Error('You cannot request your own listing.');
+    if (compat !== 'potential_match') throw new Error('Only a potential match can be sent to the owner.');
+    if (S.requests.some(r => r.listingId === listingId && r.adopter === adopterId && ['pending','accepted'].includes(r.status))) throw new Error('You already have an open request for this listing.');
+    const r = { id: 'R-' + (S.seq.request++), listingId, adopter: adopterId, habitatId, compat, intro, status: 'pending', ownerConfirmed: false, adopterConfirmed: false, created: today(), summary: safeSummary(H(habitatId)) };
+    S.requests.unshift(r); save(); return r;
+  },
+  listForOwner(ownerId) { return S.requests.filter(r => L(r.listingId)?.owner === ownerId); },
+  listForAdopter(adopterId) { return S.requests.filter(r => r.adopter === adopterId); },
+  withdraw(id, by) { const r = R(id); if (r.adopter !== by || r.status !== 'pending') throw new Error('Only a pending request can be withdrawn.'); r.status = 'withdrawn'; save(); },
+  accept(id, by) {
+    const r = R(id), l = L(r.listingId);
+    if (l.owner !== by) throw new Error('Only the listing owner can accept.');
+    if (S.requests.some(x => x.listingId === l.id && x.status === 'accepted')) throw new Error('This listing already has an accepted request.');
+    r.status = 'accepted'; l.status = 'reserved'; save();
+  },
+  decline(id, by) { const r = R(id); if (L(r.listingId).owner !== by) throw new Error('Only the listing owner can decline.'); r.status = 'declined'; save(); },
+  confirmHandover(id, by) {
+    const r = R(id), l = L(r.listingId);
+    if (r.status !== 'accepted') throw new Error('Handover can only be confirmed on an accepted request.');
+    if (l.owner === by) r.ownerConfirmed = true; else if (r.adopter === by) r.adopterConfirmed = true; else throw new Error('You are not part of this request.');
+    if (r.ownerConfirmed && r.adopterConfirmed) {
+      r.status = 'completed'; l.status = 'rehomed';
+      S.requests.forEach(x => { if (x.listingId === l.id && x.status === 'pending') x.status = 'declined'; });
+    }
+    save();
+  },
+};
+
+/* ---------- Guidance (Farhan) and compatibility (Midhir) example rules ---------- */
+function evaluateIntake(a) {
+  const s = SPECIES[a.speciesId];
+  const reasons = [];
+  if (!s) return { outcome:'needs_review', reasons:['No species was selected.'] };
+  if (s.status === 'restricted') {
+    reasons.push(`${s.common} is in our example list of restricted species.`, 'Ordinary listings cannot be published for restricted species.');
+    return { outcome:'restricted', reasons };
+  }
+  if (s.status === 'unknown') reasons.push('The organism has not been identified, so we cannot check whether it is restricted or what care it needs.');
+  if (a.condition === 'unwell') reasons.push('It is unwell or under treatment. Moving it now could spread disease to an adopter’s tank or pond.');
+  if (reasons.length) return { outcome:'needs_review', reasons };
+  reasons.push(`${s.common} is a supported species with care information on AquaBridge.`, `Condition is recorded as “${CONDITION[a.condition].toLowerCase()}”.`, 'Nothing in your answers suggests a restriction.');
+  return { outcome:'eligible', reasons };
+}
+function evaluateCompat(l, h) {
+  const s = sp(l), checks = [];
+  const add = (label, status, detail, bar) => checks.push({ label, status, detail, bar });
+  // Habitat type (hard rule)
+  if (s.habitats.includes(h.type)) add('Habitat type', 'pass', `${s.common} can live in a ${h.type}.`);
+  else add('Habitat type', 'fail', `${s.common} needs a ${s.habitats.join(' or ')}. Your habitat is a ${h.type}.`);
+  // Temperature (hard rule)
+  if (blank(h.tempMin) || blank(h.tempMax)) add('Water temperature', 'missing', 'Add the lowest and highest temperature your water usually reaches.');
+  else {
+    const ok = +h.tempMin >= s.temp[0] && +h.tempMax <= s.temp[1];
+    add('Water temperature', ok ? 'pass' : 'fail', ok ? `Your ${h.tempMin}–${h.tempMax} °C sits inside the ${s.temp[0]}–${s.temp[1]} °C range.` : `Your ${h.tempMin}–${h.tempMax} °C goes outside the ${s.temp[0]}–${s.temp[1]} °C this species needs.`,
+      { lo:0, hi:32, min:s.temp[0], max:s.temp[1], a:+h.tempMin, b:+h.tempMax, ok, unit:'°C' });
+  }
+  // pH (advice only — it can be adjusted)
+  if (blank(h.ph)) add('pH', 'missing', 'Add your pH reading. A liquid test kit gives a more reliable value than strips.');
+  else {
+    const ok = +h.ph >= s.ph[0] && +h.ph <= s.ph[1];
+    add('pH', ok ? 'pass' : 'advice', ok ? `pH ${(+h.ph).toFixed(1)} is inside ${s.ph[0].toFixed(1)}–${s.ph[1].toFixed(1)}.` : `pH ${(+h.ph).toFixed(1)} is outside ${s.ph[0].toFixed(1)}–${s.ph[1].toFixed(1)}. Talk to the owner about adjusting it slowly before handover.`,
+      { lo:5, hi:9, min:s.ph[0], max:s.ph[1], a:+h.ph, b:+h.ph, ok, unit:'pH' });
+  }
+  // Volume (hard rule)
+  if (blank(h.volume)) add('Water volume', 'missing', 'Add how many litres your tank or pond holds.');
+  else add('Water volume', +h.volume >= s.minVol ? 'pass' : 'fail', +h.volume >= s.minVol ? `${h.volume} L meets the ${s.minVol} L minimum.` : `${h.volume} L is below the ${s.minVol} L minimum for this listing.`);
+  if (s.kind === 'animal') {
+    if (blank(h.filter)) add('Filtration', 'missing', 'Tell us whether the habitat has a filter.');
+    else add('Filtration', h.filter === 'yes' ? 'pass' : 'fail', h.filter === 'yes' ? 'A filter is running.' : 'Fish and shrimp need a running filter.');
+    if (blank(h.cycled) || h.cycled === 'unsure') add('Cycled water', 'missing', 'Confirm whether the filter is cycled. Testing for ammonia and nitrite will tell you.');
+    else add('Cycled water', h.cycled === 'yes' ? 'pass' : 'advice', h.cycled === 'yes' ? 'The filter is cycled.' : 'Cycle the filter before the handover so ammonia does not build up.');
+  }
+  if (s.minDepth) {
+    if (blank(h.depth)) add('Pond depth', 'missing', 'Add the depth of the deepest part of your pond.');
+    else add('Pond depth', +h.depth >= s.minDepth ? 'pass' : 'fail', +h.depth >= s.minDepth ? `${h.depth} cm is deep enough.` : `Needs at least ${s.minDepth} cm.`);
+  }
+  if (s.light && h.light && s.light !== h.light) add('Lighting', 'advice', `${s.common} prefers ${s.light} light. Yours is ${h.light}.`);
+  const outcome = checks.some(c => c.status === 'fail') ? 'blocked' : checks.some(c => c.status === 'missing') ? 'needs_information' : 'potential_match';
+  return { outcome, checks };
+}
+
+/* ---------- Routes: screen, owner and backlog references ---------- */
+const ROUTES = {
+  home:       { title:'Homepage', owner:'Shared · Farhan coordinates routes', tasks:'Route map', stories:'CORE-003', render: renderHome },
+  browse:     { title:'Browse listings', owner:'Shawn', tasks:'S-02, S-09 (stretch)', stories:'LIST-004, LIST-005, LIST-006', render: renderBrowse },
+  listing:    { title:'Listing details', owner:'Shawn + Farhan (care data)', tasks:'S-03, F-05', stories:'LIST-004, SPEC-002, SPEC-003', render: renderListing },
+  rehome:     { title:'Guided questionnaire', owner:'Farhan', tasks:'F-01, F-02, F-05', stories:'GUID-001, GUID-002, SPEC-001', render: renderRehome },
+  review:     { title:'Review answers', owner:'Farhan', tasks:'F-03', stories:'GUID-003', render: renderReview },
+  guidance:   { title:'Guidance outcome', owner:'Farhan', tasks:'F-04, F-06', stories:'GUID-004, GUID-005, GUID-006', render: renderGuidance },
+  signin:     { title:'Sign in checkpoint', owner:'Shared · Farhan coordinates mock auth', tasks:'Mock login + return path', stories:'REG-001, REG-002, REG-005', render: renderSignin },
+  editor:     { title:'Listing editor', owner:'Shawn', tasks:'S-01, S-04', stories:'LIST-001, LIST-002, LIST-003', auth:true, render: renderEditor },
+  mylistings: { title:'My Listings', owner:'Shawn', tasks:'S-04, S-05', stories:'LIST-003, LIST-007', auth:true, render: renderMyListings },
+  incoming:   { title:'Incoming requests', owner:'Shawn + Midhir (habitat summary)', tasks:'S-06, S-07, M-05', stories:'REQ-002, REQ-003, REQ-005, REQ-006, HAB-006', auth:true, render: renderIncoming },
+  habitat:    { title:'My Habitat', owner:'Midhir', tasks:'M-01, M-02', stories:'HAB-001, HAB-002', auth:true, render: renderHabitat },
+  compat:     { title:'Compatibility check', owner:'Midhir', tasks:'M-03, M-04', stories:'HAB-003, HAB-004, HAB-005', auth:true, render: renderCompat },
+  request:    { title:'Request adoption', owner:'Midhir (screen) → Shawn (service)', tasks:'M-06, S-08', stories:'REQ-001', auth:true, render: renderRequest },
+  myrequests: { title:'My Requests', owner:'Midhir', tasks:'M-07', stories:'REQ-004, REQ-005, REQ-006, REQ-008', auth:true, render: renderMyRequests },
+  demos:      { title:'Demo flows', owner:'Product Owner reference', tasks:'End-to-end walkthroughs', stories:'Core journey across all epics', render: renderDemos },
+  map:        { title:'Screen map', owner:'Product Owner reference', tasks:'Sprint 1 overview', stories:'All epics', render: renderMap },
+  design:     { title:'Design system', owner:'Shawn proposes · Midhir coordinates', tasks:'Shared style system', stories:'CORE-002, CORE-003', render: renderDesign },
+};
+let view = { name:'home', params:{} };
+let ui = {}; // per-screen transient state (filters, selected rows, errors)
+
+function go(name, params = {}, opts = {}) {
+  const r = ROUTES[name] || ROUTES.home;
+  if (r.auth && !S.user) {
+    S.pending = { name, params, label: r.title };
+    save();
+    name = 'signin'; params = {};
+  }
+  if (view.name !== name) ui = {};
+  navOpen = false; acctOpen = false;
+  view = { name, params };
+  render();
+  if (!opts.keepScroll) window.scrollTo({ top: 0 });
+  if (!opts.keepFocus) $('#main').focus({ preventScroll: true });
+}
+function render() {
+  renderHead();
+  renderNotes();
+  const r = ROUTES[view.name];
+  $('#main').innerHTML = r.render(view.params);
+  document.title = `${r.title} · AquaBridge Prototype`;
+}
+let toastTimer;
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => t.hidden = true, 3200); }
+
+/* ---------- Header + notes ---------- */
+const LOGO = `<svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="6" fill="var(--primary)"/><path d="M5 17c0-6 4.5-10 10-10s10 4 10 10" stroke="var(--on-primary)" stroke-width="2.2" fill="none"/><path d="M4 22c2.2 0 2.2-1.6 4.4-1.6S10.6 22 12.8 22s2.2-1.6 4.4-1.6 2.2 1.6 4.4 1.6 2.2-1.6 4.4-1.6" stroke="var(--weed)" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>`;
+let navOpen = false, acctOpen = false;
+function navLink(name, label) { const cur = view.name === name || (name === 'browse' && ['listing','compat','request'].includes(view.name)) || (name === 'rehome' && ['review','guidance','editor'].includes(view.name)); return `<a href="#${name}" data-go="${name}" ${cur ? 'aria-current="page"' : ''}>${label}</a>`; }
+function ddLink(name, label, hint, badge) { return `<a class="dd-item" href="#${name}" data-go="${name}" ${view.name === name ? 'aria-current="page"' : ''}><span>${label}<small>${hint}</small></span>${badge ? `<span class="badge" aria-label="${badge} waiting">${badge}</span>` : ''}</a>`; }
+const CHEVRON = `<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4.5 6 8.5 10 4.5" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>`;
+function renderHead() {
+  const u = S.user && USERS[S.user];
+  const inc = S.user ? RequestService.listForOwner(S.user).filter(r => r.status === 'pending').length : 0;
+  const inAccount = ['mylistings','incoming','habitat','myrequests'].includes(view.name);
+  $('#head').innerHTML = `<div class="wrap head-row">
+    <a class="brand" href="#home" data-go="home">${LOGO}AquaBridge</a>
+    <nav class="nav ${navOpen ? 'open' : ''}" id="nav" aria-label="Main">
+      <div class="nav-main">
+        ${navLink('browse','Browse listings')}
+        ${navLink('rehome','Rehome')}
+        <a href="#how" data-act="howItWorks">How it works</a>
+      </div>
+      <div class="acct">
+        ${u ? `<div class="dd">
+            <button class="dd-btn" data-act="acctMenu" aria-expanded="${acctOpen}" aria-controls="acctPanel" ${inAccount ? 'data-current' : ''}><span class="avatar" aria-hidden="true">JL</span><span>My account</span>${inc ? `<span class="badge" aria-label="${inc} requests waiting">${inc}</span>` : ''}${CHEVRON}</button>
+            <div class="dd-panel ${acctOpen ? 'open' : ''}" id="acctPanel">
+              <div class="dd-who"><strong>${esc(u.name)}</strong>Sample account</div>
+              <div class="dd-group"><span class="dd-label">Rehoming</span>${ddLink('mylistings','My Listings','Drafts, live and rehomed')}${ddLink('incoming','Incoming requests','Adopters asking for yours', inc)}</div>
+              <div class="dd-group"><span class="dd-label">Adopting</span>${ddLink('habitat','My Habitat','Your saved tanks and ponds')}${ddLink('myrequests','My Requests','Requests you have sent')}</div>
+              <button class="dd-item dd-out" data-act="signout">Sign out</button>
+            </div>
+          </div>`
+          : `<a class="btn btn-quiet" href="#signin" data-go="signin">Log in</a><a class="btn btn-primary btn-sm" href="#signin" data-go="signin" data-tab="register">Sign up</a>`}
+      </div>
+    </nav>
+    <button class="btn btn-secondary btn-sm menu-btn" data-act="menu" aria-expanded="${navOpen}" aria-controls="nav">${navOpen ? 'Close' : 'Menu'}</button>
+  </div>`;
+}
+function renderNotes() {
+  const r = ROUTES[view.name];
+  $('#notesToggle').textContent = S.notes ? 'Hide build notes' : 'Show build notes';
+  $('#notes').innerHTML = S.notes ? `<div class="notes" aria-label="Build notes"><div class="wrap">
+    <span>SCREEN <b>${esc(r.title)}</b></span><span>OWNER <b class="who">${esc(r.owner)}</b></span><span>TASKS <b>${esc(r.tasks)}</b></span><span>STORIES <b>${esc(r.stories)}</b></span>${r.auth ? '<span>LOGIN <b>required</b></span>' : '<span>LOGIN <b>not required</b></span>'}${tour ? '' : '<a href="#demos" data-go="demos" style="margin-left:auto">Watch the demo flows →</a>'}
+  </div></div>` : '';
+}
+
+/* ---------- Screens ---------- */
+const AQUARIUM = `<svg class="hero-art" viewBox="0 0 560 440" role="img" aria-labelledby="artTitle">
+  <title id="artTitle">Illustration of a planted aquarium with a goldfish, neon tetras and a cherry shrimp</title>
+  <defs>
+    <linearGradient id="abWater" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D6F3EB"/><stop offset="1" stop-color="#A8DED1"/></linearGradient>
+    <clipPath id="abTank"><rect x="72" y="104" width="416" height="254" rx="12"/></clipPath>
+  </defs>
+  <ellipse cx="282" cy="232" rx="264" ry="200" fill="#E4F6F0"/>
+  <circle cx="58" cy="92" r="14" fill="#C9EFE2"/><circle cx="512" cy="64" r="9" fill="#C9EFE2"/><circle cx="530" cy="372" r="15" fill="#D6F3EB"/>
+  <rect x="96" y="372" width="368" height="20" rx="6" fill="#12324A"/>
+  <rect x="118" y="390" width="14" height="32" rx="3" fill="#12324A"/><rect x="428" y="390" width="14" height="32" rx="3" fill="#12324A"/>
+  <g clip-path="url(#abTank)">
+    <rect x="72" y="104" width="416" height="254" fill="#F3FBF9"/>
+    <path d="M72 132 Q98 124 124 132 T176 132 T228 132 T280 132 T332 132 T384 132 T436 132 T488 132 V358 H72Z" fill="url(#abWater)"/>
+    <path d="M150 134 L118 358 H168 L192 134Z" fill="#FFFFFF" opacity=".22"/>
+    <path d="M300 134 L292 358 H336 L332 134Z" fill="#FFFFFF" opacity=".18"/>
+    <path d="M72 318 Q150 300 230 314 T390 308 T488 312 V358 H72Z" fill="#F3E3BA"/>
+    <ellipse cx="128" cy="330" rx="12" ry="6" fill="#E2CB93"/><ellipse cx="206" cy="338" rx="9" ry="5" fill="#C9D9D4"/><ellipse cx="372" cy="334" rx="14" ry="7" fill="#C9D9D4"/><ellipse cx="452" cy="340" rx="8" ry="4" fill="#E2CB93"/>
+    <path d="M296 330 C314 300 356 294 396 310 L420 296 L420 310 C434 316 436 330 422 334 Z" fill="#BE8F62"/>
+    <path d="M318 318 C340 308 366 306 392 316" stroke="#A47548" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <g class="sway">
+      <g stroke="#2E9C6C" stroke-width="6" stroke-linecap="round" fill="none"><path d="M108 320 C98 270 124 230 106 172"/><path d="M128 320 C142 272 118 242 138 196"/><path d="M150 322 C152 292 162 272 156 244"/></g>
+      <g fill="#46B37F"><ellipse cx="100" cy="196" rx="7" ry="16" transform="rotate(-30 100 196)"/><ellipse cx="116" cy="236" rx="7" ry="16" transform="rotate(35 116 236)"/><ellipse cx="102" cy="276" rx="7" ry="15" transform="rotate(-35 102 276)"/><ellipse cx="146" cy="214" rx="7" ry="15" transform="rotate(30 146 214)"/><ellipse cx="128" cy="258" rx="7" ry="15" transform="rotate(-30 128 258)"/><ellipse cx="162" cy="264" rx="6" ry="13" transform="rotate(35 162 264)"/></g>
+    </g>
+    <g class="sway sway-2" fill="#5CC4A6">
+      <ellipse cx="404" cy="262" rx="10" ry="36" transform="rotate(-22 404 262)"/><ellipse cx="420" cy="252" rx="10" ry="42" transform="rotate(4 420 252)"/><ellipse cx="438" cy="264" rx="10" ry="34" transform="rotate(26 438 264)"/>
+      <path d="M404 262 L418 296 M420 252 L420 296 M438 264 L422 296" stroke="#2E9C6C" stroke-width="2" fill="none"/>
+    </g>
+    <g transform="translate(262 196)"><g class="swim-a">
+      <path d="M-30 0 C-52 -28 -72 -20 -68 0 C-72 20 -52 28 -30 0Z" fill="#F8AE66"/>
+      <ellipse cx="0" cy="0" rx="40" ry="28" fill="#F5934A"/>
+      <path d="M-14 -25 C-6 -44 16 -42 18 -23Z" fill="#F8AE66"/>
+      <ellipse cx="-4" cy="15" rx="12" ry="6" fill="#F8BC80" transform="rotate(22 -4 15)"/>
+      <circle cx="12" cy="8" r="5" fill="#F8BC80" opacity=".9"/>
+      <circle cx="20" cy="-6" r="8.5" fill="#FFFFFF"/><circle cx="22.5" cy="-6" r="4.5" fill="#12324A"/><circle cx="24" cy="-8" r="1.4" fill="#FFFFFF"/>
+      <path d="M31 7 Q35 11 31 14" stroke="#12324A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    </g></g>
+    <g transform="translate(176 258)"><g class="swim-b">
+      <path d="M-20 0 L-34 -10 L-34 10Z" fill="#A8CFEA"/>
+      <ellipse rx="24" ry="10" fill="#D7EAF6"/>
+      <path d="M-14 -2 H16" stroke="#2F80CF" stroke-width="5" stroke-linecap="round"/>
+      <path d="M-14 5 H4" stroke="#E2574C" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="14" cy="-3" r="3" fill="#12324A"/>
+    </g></g>
+    <g transform="translate(214 290) scale(.8)"><g class="swim-c">
+      <path d="M-20 0 L-34 -10 L-34 10Z" fill="#A8CFEA"/>
+      <ellipse rx="24" ry="10" fill="#D7EAF6"/>
+      <path d="M-14 -2 H16" stroke="#2F80CF" stroke-width="5" stroke-linecap="round"/>
+      <path d="M-14 5 H4" stroke="#E2574C" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="14" cy="-3" r="3" fill="#12324A"/>
+    </g></g>
+    <g transform="translate(384 196) scale(-.75 .75)"><g class="swim-c">
+      <path d="M-26 0 C-44 -20 -58 -14 -55 0 C-58 14 -44 20 -26 0Z" fill="#F7D774"/>
+      <ellipse rx="32" ry="20" fill="#F3C845"/>
+      <circle cx="16" cy="-5" r="7" fill="#FFFFFF"/><circle cx="18" cy="-5" r="3.8" fill="#12324A"/>
+      <path d="M26 5 Q29 8 26 11" stroke="#12324A" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+    </g></g>
+    <g transform="translate(236 320)">
+      <path d="M0 0 C-4 -14 10 -24 24 -18 C32 -14 30 -4 22 -2 C14 0 6 4 0 0Z" fill="#E8584B"/>
+      <path d="M24 -18 C34 -30 42 -32 50 -34 M24 -16 C36 -24 44 -24 52 -26" stroke="#E8584B" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+      <circle cx="21" cy="-14" r="1.9" fill="#12324A"/>
+      <path d="M5 0 L0 6 M11 0 L8 6 M17 -1 L16 5" stroke="#E8584B" stroke-width="1.6" stroke-linecap="round"/>
+    </g>
+    <rect x="460" y="330" width="16" height="8" rx="3" fill="#7F96A3"/>
+    <g fill="#FFFFFF" fill-opacity=".65" stroke="#FFFFFF" stroke-width="1.5">
+      <circle class="bub" cx="468" cy="304" r="4"/><circle class="bub" cx="462" cy="272" r="6"/><circle class="bub" cx="470" cy="238" r="5"/><circle class="bub" cx="464" cy="202" r="7"/><circle class="bub" cx="470" cy="166" r="5"/>
+    </g>
+  </g>
+  <rect x="72" y="104" width="416" height="254" rx="12" fill="none" stroke="#12324A" stroke-width="5"/>
+  <path d="M92 150 V228" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" opacity=".75"/>
+  <rect x="60" y="88" width="440" height="20" rx="7" fill="#12324A"/>
+  <rect x="236" y="94" width="88" height="7" rx="3.5" fill="#5CC4A6"/>
+</svg>`;
+
+function renderHome() {
+  const active = S.listings.filter(l => l.status === 'active');
+  return `
+  <section class="hero-wrap"><div class="wrap hero">
+    <div>
+      <p class="label">Free aquatic rehoming across the UK</p>
+      <h1>A good new home for every <em>fish, shrimp and plant</em>.</h1>
+      <p class="lede">Can’t look after them any more? We’ll guide you through rehoming responsibly. Want to adopt? Check your tank or pond is right before you ask.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary btn-lg" href="#rehome" data-go="rehome">Rehome an animal or plant</a>
+        <a class="btn btn-secondary btn-lg" href="#browse" data-go="browse">Browse ${active.length} listings</a>
+      </div>
+      <ul class="assure"><li>Free for owners and adopters</li><li>No account needed to look around</li><li>Animals and plants</li></ul>
+    </div>
+    ${AQUARIUM}
+  </div></section>
+
+  <section class="wrap how" id="how">
+    <div class="page-head"><p class="label">How it works</p><h2 tabindex="-1">Two ways to use AquaBridge</h2><p>One account does both. Pick the side you’re on today.</p></div>
+    <div class="journeys" style="padding-block:0;gap:var(--s5)">
+      <div class="path-card">
+        <div class="stack" style="gap:6px"><p class="label">I need to rehome</p><h3>From first questions to a confirmed handover</h3></div>
+        <ol class="steps">
+          <li><div><b>Answer a few questions</b><p>Species, quantity, condition, location and how soon.</p></div></li>
+          <li><div><b>Read your guidance</b><p>We explain whether a listing is suitable, or what to do instead.</p></div></li>
+          <li><div><b>Publish your listing</b><p>Your answers fill it in, so you only add a description.</p></div></li>
+          <li><div><b>Choose an adopter</b><p>Every request shows a summary of the adopter’s setup.</p></div></li>
+          <li><div><b>Confirm the handover</b><p>The listing closes when you and the adopter both confirm.</p></div></li>
+        </ol>
+        <a class="btn btn-primary" href="#rehome" data-go="rehome">Start rehoming</a>
+      </div>
+      <div class="path-card">
+        <div class="stack" style="gap:6px"><p class="label">I want to adopt</p><h3>Check your setup before you ask</h3></div>
+        <ol class="steps">
+          <li><div><b>Browse listings</b><p>No account needed to look around.</p></div></li>
+          <li><div><b>Read the care needs</b><p>Temperature, pH, tank size and habitat for each species.</p></div></li>
+          <li><div><b>Save your tank or pond</b><p>Enter it once and reuse it for every listing.</p></div></li>
+          <li><div><b>Check compatibility</b><p>See what matches and what needs attention.</p></div></li>
+          <li><div><b>Send a request</b><p>Introduce yourself, then follow its progress.</p></div></li>
+        </ol>
+        <a class="btn btn-secondary" href="#browse" data-go="browse">Browse listings</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap" style="padding-bottom:var(--s7)">
+    <div class="row between" style="margin-bottom:var(--s4)"><h2>Recently listed</h2><a href="#browse" data-go="browse">See all ${active.length} listings →</a></div>
+    <div class="grid-cards">${active.slice(0, 3).map(l => card(l)).join('')}</div>
+  </section>
+
+  <section class="band" aria-label="Why it matters">
+    <div class="wrap">
+      <span class="sdg">SDG 14 · Life below water</span>
+      <p>Released pets and plants can carry disease and spread through rivers and ponds. Rehoming through AquaBridge keeps them out of the wild.</p>
+      <a class="btn btn-secondary btn-sm" href="#rehome" data-go="rehome">Start rehoming</a>
+    </div>
+  </section>`;
+}
+
+function renderBrowse() {
+  ui.kind ??= 'all'; ui.q ??= ''; ui.hab ??= 'any';
+  const q = ui.q.trim().toLowerCase();
+  const list = S.listings.filter(l => l.status === 'active').filter(l => {
+    const s = sp(l);
+    if (ui.kind !== 'all' && s.kind !== ui.kind) return false;
+    if (ui.hab !== 'any' && !(s.habitats || []).includes(ui.hab)) return false;
+    if (q && !(`${l.title} ${s.common} ${s.sci} ${l.location}`.toLowerCase().includes(q))) return false;
+    return true;
+  });
+  const seg = (key, val, label) => `<button type="button" data-act="filter" data-key="${key}" data-val="${val}" aria-pressed="${ui[key] === val}">${label}</button>`;
+  return `<div class="wrap page">
+    <div class="page-head"><h1>Available listings</h1><p>Every listing has passed the guided questions. Open one to read its care needs and check it against your tank or pond.</p></div>
+    <div class="toolbar">
+      <div class="field"><label for="q">Search species or town</label><input type="text" id="q" value="${esc(ui.q)}" placeholder="e.g. tetra, Uxbridge" data-live="q"></div>
+      <div class="field" style="flex:0 0 auto"><span class="small" style="font-weight:700">Type</span><div class="seg">${seg('kind','all','All')}${seg('kind','animal','Animals')}${seg('kind','plant','Plants')}</div></div>
+      <div class="field" style="flex:0 0 auto"><span class="small" style="font-weight:700">Lives in</span><div class="seg">${seg('hab','any','Any')}${seg('hab','aquarium','Aquarium')}${seg('hab','pond','Pond')}</div></div>
+    </div>
+    <p class="small muted" style="margin-bottom:var(--s4)" aria-live="polite">${list.length} of ${S.listings.filter(l => l.status === 'active').length} listings</p>
+    ${list.length ? `<div class="grid-cards" id="results">${list.map(l => card(l)).join('')}</div>` :
+      `<div class="empty"><strong>No listings match those filters.</strong><button class="btn btn-secondary btn-sm" data-act="clearFilters">Clear filters</button></div>`}
+  </div>`;
+}
+
+function renderListing({ id }) {
+  const l = L(id);
+  if (!l) return `<div class="wrap page"><div class="empty"><strong>That listing could not be found.</strong><a class="btn btn-secondary" href="#browse" data-go="browse">Back to listings</a></div></div>`;
+  const s = sp(l), mine = S.user && l.owner === S.user;
+  const avail = l.status === 'active';
+  const existing = S.user && S.requests.find(r => r.listingId === l.id && r.adopter === S.user && ['pending','accepted'].includes(r.status));
+  const myHabs = S.user ? S.habitats.filter(h => h.owner === S.user).length : 0;
+  return `<div class="wrap page">
+    <p class="crumb"><a href="#browse" data-go="browse">← All listings</a></p>
+    <div class="two" style="margin-top:var(--s4)">
+      <div class="stack-lg">
+        ${plate(s, 'detail-plate')}
+        <div class="stack">
+          <div class="row">${chip(l.status)}<span class="mono muted">${l.id}</span>${l.urgency === 'week' ? '<span class="chip warn plain">Needs a home this week</span>' : ''}</div>
+          <h1>${esc(l.title)}</h1>
+          <p style="max-width:65ch">${esc(l.description)}</p>
+        </div>
+        <div class="facts">
+          <div><span class="label">Species</span><b>${esc(s.common)}</b></div>
+          <div><span class="label">Quantity</span><b>${esc(l.qty)}</b></div>
+          <div><span class="label">Condition</span><b>${CONDITION[l.condition]}</b></div>
+          <div><span class="label">Location</span><b>${esc(l.location)}</b></div>
+          <div><span class="label">Available</span><b>${URGENCY[l.urgency]}</b></div>
+          <div><span class="label">Listed by</span><b>${esc(USERS[l.owner]?.short || 'You')}</b></div>
+        </div>
+        ${l.careNotes ? `<div class="stack" style="gap:8px"><h2 style="font-size:var(--t-lg)">Owner’s care notes</h2><p style="max-width:65ch">${esc(l.careNotes)}</p></div>` : ''}
+        ${!mine ? `<div class="stack" style="gap:8px"><h2 style="font-size:var(--t-lg)">Before you ask</h2><ul class="reasons">
+          <li>Make sure your ${s.habitats ? s.habitats.join(' or ') : 'setup'} is set up and stable before collection${s.kind === 'animal' ? ', with the filter already cycled' : ''}.</li>
+          <li>Collection is arranged with the owner after they accept. Bring ${s.kind === 'plant' ? 'a damp bag or a tub with a little water' : 'a sealed bag or insulated box with water from their tank'}.</li>
+          <li>Only the town and postcode district are shown. The owner shares the exact pickup point once they accept.</li>
+        </ul></div>` : ''}
+      </div>
+      <aside class="stack sticky">
+        <div class="panel stack">
+          ${mine ? `<strong style="font-family:var(--f-display);font-size:var(--t-lg)">This is your listing</strong><p class="small muted">Adopters see a Check compatibility button here.</p><a class="btn btn-primary" href="#mylistings" data-go="mylistings">Manage in My Listings</a>`
+          : existing ? `<strong style="font-family:var(--f-display);font-size:var(--t-lg)">You’ve asked for these</strong><div class="row">${chip(existing.status)}<span class="mono muted">${existing.id}</span></div><p class="small muted">${existing.status === 'accepted' ? 'The owner accepted. Confirm the handover in My Requests once you have them.' : 'The owner hasn’t decided yet. You can follow or withdraw it in My Requests.'}</p><a class="btn btn-primary" href="#myrequests" data-go="myrequests">Go to My Requests</a>`
+          : avail ? `<strong style="font-family:var(--f-display);font-size:var(--t-lg)">Could you give them a home?</strong>
+            <ol class="reasons small"><li>${myHabs ? `Pick one of your ${myHabs} saved habitats` : 'Describe your tank or pond once'}.</li><li>We compare it with the care needs below.</li><li>If it’s a match, introduce yourself to ${esc(USERS[l.owner].short)}.</li></ol>
+            <a class="btn btn-primary" href="#compat" data-go="compat" data-id="${l.id}">Check compatibility</a>
+            ${!S.user ? '<p class="small muted">You’ll be asked to log in first. Looking around stays free.</p>' : ''}`
+          : `<strong>Not taking requests</strong><p class="small muted">This listing is ${l.status}.</p>`}
+        </div>
+        <div class="panel care">
+          <div class="row between"><h3>Care needs</h3><span class="label">Species guide</span></div>
+          <p class="small"><i>${esc(s.sci)}</i></p>
+          ${s.temp ? `<dl>
+            <dt>Temperature</dt><dd>${s.temp[0]}–${s.temp[1]} °C</dd>
+            <dt>pH</dt><dd>${s.ph[0].toFixed(1)}–${s.ph[1].toFixed(1)}</dd>
+            <dt>Minimum volume</dt><dd>${s.minVol} L</dd>
+            <dt>Habitat</dt><dd>${s.habitats.join(', ')}</dd>
+            ${s.minDepth ? `<dt>Planting depth</dt><dd>≥ ${s.minDepth} cm</dd>` : ''}
+            ${s.light ? `<dt>Light</dt><dd>${s.light}</dd>` : ''}
+          </dl>` : ''}
+          <p class="small">${esc(s.care)}</p>
+          <p class="small muted">Care ranges are sample reference data and have not been verified by a specialist.</p>
+        </div>
+      </aside>
+    </div>
+  </div>`;
+}
+
+/* Questionnaire */
+const STEPS = ['Organism', 'Species', 'Condition', 'Location'];
+function progress(n) { return `<ol class="progress" aria-label="Step ${n} of 4">${STEPS.map((t, i) => `<li class="${i + 1 < n ? 'done' : i + 1 === n ? 'now' : ''}" ${i + 1 === n ? 'aria-current="step"' : ''}><span>${i + 1}. ${t}</span></li>`).join('')}</ol>`; }
+function fieldErr(k) { return ui.errors?.[k] ? `<span class="err" id="e-${k}">${esc(ui.errors[k])}</span>` : ''; }
+function errCls(k) { return ui.errors?.[k] ? 'has-error' : ''; }
+function careWidget(id) {
+  const s = SPECIES[id];
+  if (!s) return `<div class="panel-quiet small muted">Pick a species to see its care reference.</div>`;
+  return `<div class="panel care"><span class="label">Species guide · ${id}</span><h3>${esc(s.common)}</h3><p class="small"><i>${esc(s.sci)}</i></p>
+    ${s.temp ? `<dl><dt>Temperature</dt><dd>${s.temp[0]}–${s.temp[1]} °C</dd><dt>pH</dt><dd>${s.ph[0].toFixed(1)}–${s.ph[1].toFixed(1)}</dd><dt>Min. volume</dt><dd>${s.minVol} L</dd><dt>Habitat</dt><dd>${s.habitats.join(', ')}</dd></dl>` : ''}
+    ${s.status !== 'supported' ? `<div class="notice ${s.status === 'restricted' ? 'bad' : 'warn'}"><strong>${s.status === 'restricted' ? 'Restricted example' : 'Not identified'}</strong></div>` : ''}
+    <p class="small">${esc(s.care)}</p></div>`;
+}
+function renderRehome() {
+  const a = S.intake.answers, n = S.intake.step;
+  let body = '';
+  if (n === 1) body = `<fieldset class="stack"><legend><h2>What are you rehoming?</h2></legend>
+      <p class="muted">We support a small list of animals and plants to start with.</p>
+      <div class="choices ${errCls('kind')}">
+        <label class="choice"><input type="radio" name="kind" value="animal" ${a.kind === 'animal' ? 'checked' : ''} data-rerender><strong>An animal</strong><span>Fish, shrimp, snails or turtles</span></label>
+        <label class="choice"><input type="radio" name="kind" value="plant" ${a.kind === 'plant' ? 'checked' : ''} data-rerender><strong>A plant</strong><span>Aquarium or pond plants</span></label>
+      </div>${fieldErr('kind')}</fieldset>`;
+  if (n === 2) {
+    const opts = Object.entries(SPECIES).filter(([, s]) => s.kind === a.kind || s.kind === 'any');
+    body = `<div class="stack"><h2>Which species is it?</h2>
+      <div class="form-grid">
+        <div class="field full ${errCls('speciesId')}"><label for="speciesId">Species <span class="req">*</span></label>
+          <select id="speciesId" name="speciesId" data-rerender><option value="">Choose a species</option>${opts.map(([id, s]) => `<option value="${id}" ${a.speciesId === id ? 'selected' : ''}>${esc(s.common)}${s.status === 'supported' ? ` (${esc(s.sci)})` : ''}</option>`).join('')}</select>
+          <span class="hint">Includes two restricted examples so the team can test that path.</span>${fieldErr('speciesId')}</div>
+        <div class="field ${errCls('quantity')}"><label for="quantity">How many? <span class="req">*</span></label><input type="number" id="quantity" name="quantity" min="1" max="500" value="${esc(a.quantity ?? '')}" inputmode="numeric">${fieldErr('quantity')}</div>
+        ${a.kind === 'plant' ? `<div class="field"><label for="grownIn">Currently growing in</label><select id="grownIn" name="grownIn"><option value="aquarium" ${a.grownIn === 'aquarium' ? 'selected' : ''}>Aquarium</option><option value="pond" ${a.grownIn === 'pond' ? 'selected' : ''}>Pond</option></select></div>` : ''}
+      </div></div>`;
+  }
+  if (n === 3) body = `<div class="stack"><h2>Condition and circumstances</h2>
+      <fieldset class="field ${errCls('condition')}"><legend>How is it doing? <span class="req">*</span></legend>
+        <div class="choices">${Object.entries(CONDITION).map(([k, v]) => `<label class="choice"><input type="radio" name="condition" value="${k}" ${a.condition === k ? 'checked' : ''} data-rerender><strong>${v}</strong></label>`).join('')}</div>${fieldErr('condition')}</fieldset>
+      ${a.condition && a.condition !== 'healthy' ? `<div class="field ${errCls('health')}"><label for="health">Describe the problem or treatment <span class="req">*</span></label><textarea id="health" name="health" placeholder="${a.kind === 'plant' ? 'e.g. some yellowing leaves, snails present' : 'e.g. white spot, treated with salt for a week'}">${esc(a.health ?? '')}</textarea>${fieldErr('health')}</div>` : ''}
+      <div class="field ${errCls('reason')}"><label for="reason">Why are you rehoming? <span class="req">*</span></label><select id="reason" name="reason"><option value="">Choose a reason</option>${Object.entries(REASON).map(([k, v]) => `<option value="${k}" ${a.reason === k ? 'selected' : ''}>${v}</option>`).join('')}</select>${fieldErr('reason')}</div>
+    </div>`;
+  if (n === 4) body = `<div class="stack"><h2>Location and timing</h2>
+      <div class="form-grid">
+        <div class="field ${errCls('location')}"><label for="location">Town and postcode district <span class="req">*</span></label><input type="text" id="location" name="location" value="${esc(a.location ?? '')}" placeholder="e.g. Uxbridge, UB8" autocomplete="off"><span class="hint">Only the town and first half of the postcode are shown publicly.</span>${fieldErr('location')}</div>
+        <fieldset class="field full ${errCls('urgency')}"><legend>How soon does it need a new home? <span class="req">*</span></legend>
+          <div class="choices">${Object.entries(URGENCY).map(([k, v]) => `<label class="choice"><input type="radio" name="urgency" value="${k}" ${a.urgency === k ? 'checked' : ''}><strong>${v}</strong></label>`).join('')}</div>${fieldErr('urgency')}</fieldset>
+        <div class="field full"><label for="details">Anything else an adopter should know?</label><textarea id="details" name="details" placeholder="Tank mates, feeding, equipment you could include">${esc(a.details ?? '')}</textarea></div>
+      </div></div>`;
+  return `<div class="wrap page">
+    <div class="page-head"><p class="label">Rehome · no account needed</p><h1>Tell us about it</h1><p>Four short steps. Your answers stay in this browser until you choose to create a listing.</p></div>
+    <div class="qwrap">
+      <form class="panel" data-form="intake" novalidate>
+        ${progress(n)}
+        ${body}
+        <div class="form-foot">
+          ${n > 1 ? `<button type="button" class="btn btn-secondary" data-act="intakeBack">← Back</button>` : `<span></span>`}
+          <button type="submit" class="btn btn-primary">${n < 4 ? 'Continue' : 'Review my answers'}</button>
+        </div>
+      </form>
+      <aside class="stack sticky">${careWidget(a.speciesId)}
+        <div class="notice"><strong>Never release it</strong><span>Releasing aquatic animals or plants into ponds, rivers or drains harms wildlife and can be an offence.</span></div>
+      </aside>
+    </div>
+  </div>`;
+}
+function readForm(f) { const d = {}; new FormData(f).forEach((v, k) => d[k] = typeof v === 'string' ? v.trim() : v); return d; }
+function validateStep(n, a) {
+  const e = {};
+  if (n === 1 && !a.kind) e.kind = 'Choose an animal or a plant.';
+  if (n === 2) { if (!a.speciesId) e.speciesId = 'Choose a species, or pick “I’m not sure”.'; if (!(+a.quantity >= 1)) e.quantity = 'Enter a number of 1 or more.'; }
+  if (n === 3) { if (!a.condition) e.condition = 'Choose the closest description.'; if (a.condition && a.condition !== 'healthy' && !a.health) e.health = 'Describe the problem so we can give the right guidance.'; if (!a.reason) e.reason = 'Choose a reason.'; }
+  if (n === 4) { if (!a.location || a.location.length < 3) e.location = 'Enter a town and postcode district, like “Ealing, W5”.'; if (!a.urgency) e.urgency = 'Choose how soon.'; }
+  return e;
+}
+
+function renderReview() {
+  const a = S.intake.answers, s = SPECIES[a.speciesId] || {};
+  const row = (k, v) => `<tr><th scope="row">${k}</th><td>${v || '<span class="muted">Not given</span>'}</td></tr>`;
+  const group = (title, step, rows) => `<div class="review-group"><h3>${title}</h3><button class="btn btn-quiet btn-sm" data-act="editStep" data-step="${step}">Change</button></div><table class="review"><tbody>${rows}</tbody></table>`;
+  return `<div class="wrap page">
+    <div class="page-head"><p class="crumb"><a href="#rehome" data-act="editStep" data-step="4">← Back to questions</a></p><h1>Check your answers</h1><p>Guidance is based only on what you tell us. Change anything that isn’t right.</p></div>
+    <div class="qwrap">
+      <div class="panel">
+        ${group('Organism', 1, row('Type', a.kind === 'plant' ? 'Plant' : 'Animal'))}
+        ${group('Species', 2, row('Species', esc(s.common)) + row('Quantity', esc(a.quantity)) + (a.kind === 'plant' ? row('Growing in', esc(a.grownIn || 'aquarium')) : ''))}
+        ${group('Condition', 3, row('Condition', CONDITION[a.condition]) + (a.health ? row('Details', esc(a.health)) : '') + row('Reason', REASON[a.reason]))}
+        ${group('Location and timing', 4, row('Location', esc(a.location)) + row('Timing', URGENCY[a.urgency]) + row('Other details', esc(a.details)))}
+        <div class="form-foot"><button class="btn btn-secondary" data-act="editStep" data-step="4">← Back</button><button class="btn btn-primary" data-act="submitIntake">See my guidance</button></div>
+      </div>
+      <aside class="sticky">${careWidget(a.speciesId)}</aside>
+    </div>
+  </div>`;
+}
+
+function renderGuidance() {
+  const a = S.intake.answers, g = S.intake.outcome || evaluateIntake(a), s = SPECIES[a.speciesId] || {};
+  const head = { eligible:['ok','You can create a listing', 'Your answers fit our guidance for a public listing.'],
+                 needs_review:['warn','We need more information first', 'A public listing isn’t available yet. Here is what to do next.'],
+                 restricted:['bad','This can’t be listed publicly', 'Ordinary rehoming listings are not offered for this species.'] }[g.outcome];
+  const alt = {
+    eligible: [ a.urgency === 'week' ? 'Short on time? Ask a local aquatic shop or fishkeeping club whether they take in rehomes while you wait for an adopter.' : 'Ask a local fishkeeping club to share your listing with members.', 'Keep caring for it as normal until the handover is confirmed.' ],
+    needs_review: [ s.status === 'unknown' ? 'Ask a specialist aquatic shop to identify it, then answer the questions again.' : 'Wait until treatment has finished and it has been healthy for two weeks, then answer the questions again.', a.condition === 'unwell' ? 'Speak to a vet with fish experience about treatment.' : 'Take clear photos to help with identification.', 'Keep it in its current tank or pond in the meantime.' ],
+    restricted: [ 'Keep caring for it where it is now. Do not release it into ponds, rivers or drains.', 'Contact a specialist rescue or your local authority for advice on what is allowed.', 'Read the GOV.UK guidance on invasive non-native species.' ],
+  }[g.outcome];
+  return `<div class="wrap page">
+    <div class="page-head"><p class="label">Example outcome · Sprint 1 sample rules</p><h1>Your rehoming guidance</h1></div>
+    <div class="qwrap">
+      <div class="stack-lg">
+        <section class="outcome ${head[0]}"><div>
+          <div class="row">${chip(g.outcome)}<span class="mono muted">${esc(s.common || '')} × ${esc(a.quantity)}</span></div>
+          <h2>${head[1]}</h2><p class="muted">${head[2]}</p>
+          <h3 style="font-size:var(--t-md);margin-top:var(--s2)">Why you’re seeing this</h3>
+          <ul class="reasons">${g.reasons.map(r => `<li>${esc(r)}</li>`).join('')}</ul>
+        </div></section>
+        <section class="stack"><h3>${g.outcome === 'eligible' ? 'Also worth doing' : 'What you can do instead'}</h3><ul class="reasons">${alt.map(x => `<li>${esc(x)}</li>`).join('')}</ul></section>
+        <div class="row">
+          ${g.outcome === 'eligible' ? `<button class="btn btn-primary" data-act="createFromIntake">Create my listing</button>` : ''}
+          <button class="btn btn-secondary" data-act="editStep" data-step="1">Change my answers</button>
+          <button class="btn btn-quiet" data-act="newIntake">Start again</button>
+        </div>
+        ${g.outcome === 'eligible' && !S.user ? `<p class="small muted">You’ll be asked to sign in. Your answers will be kept and used to fill in the listing.</p>` : ''}
+        <div class="notice"><strong>Illustrative only</strong><span>Sprint 1 uses example rules. This is not a legal or veterinary decision.</span></div>
+      </div>
+      <aside class="sticky">${careWidget(a.speciesId)}</aside>
+    </div>
+  </div>`;
+}
+
+function renderSignin() {
+  const p = S.pending;
+  const tab = ui.tab || 'login';
+  return `<div class="wrap page" style="max-width:520px">
+    <div class="page-head"><h1>${tab === 'login' ? 'Log in to continue' : 'Create your account'}</h1>
+      ${p ? `<div class="notice pri"><strong>You’ll go back to: ${esc(p.label)}</strong><span>${p.name === 'editor' ? 'Your rehoming answers are saved and will fill in the listing.' : 'Anything you entered is kept.'}</span></div>` : '<p>One account lets you rehome and adopt.</p>'}
+    </div>
+    <div class="tabs" role="tablist"><button role="tab" aria-selected="${tab === 'login'}" data-act="authTab" data-tab="login">Log in</button><button role="tab" aria-selected="${tab === 'register'}" data-act="authTab" data-tab="register">Sign up</button></div>
+    <form class="stack" data-form="signin" novalidate>
+      ${tab === 'register' ? `<div class="field"><label for="name">Your name</label><input type="text" id="name" value="Jordan Lee" autocomplete="off"></div>` : ''}
+      <div class="field"><label for="email">Email</label><input type="email" id="email" value="jordan.lee@example.com" autocomplete="off"></div>
+      <div class="field"><label for="pw">Password</label><input type="password" id="pw" value="sample-only" autocomplete="off"></div>
+      <button type="submit" class="btn btn-primary">${tab === 'login' ? 'Log in' : 'Create account'} as sample user</button>
+    </form>
+    <div class="demo" style="margin-top:var(--s5)"><span class="label">Prototype note</span><span>The university-provided login component replaces this form. Any submit signs in the sample user Jordan Lee (U-01) and returns to the saved action.</span></div>
+  </div>`;
+}
+
+function editorDraft() {
+  if (ui.draft) return ui.draft;
+  const { id, fromIntake } = view.params;
+  if (id) { ui.draft = { ...L(id) }; return ui.draft; }
+  const a = S.intake.answers, s = SPECIES[a.speciesId] || {};
+  ui.draft = { id: null, owner: S.user, speciesId: a.speciesId || 'SP-001', title: fromIntake ? `${a.quantity} ${s.common?.toLowerCase()} need a new home` : '', qty: +a.quantity || 1,
+    location: a.location || '', condition: a.condition || 'healthy', urgency: a.urgency || 'month', status: 'draft',
+    description: fromIntake ? [REASON[a.reason] ? `Reason for rehoming: ${REASON[a.reason].toLowerCase()}.` : '', a.details || ''].join(' ').trim() : '', careNotes: a.health || '', intakeId: fromIntake ? S.intake.id : null, created: today() };
+  return ui.draft;
+}
+function renderEditor() {
+  const d = editorDraft(), s = SPECIES[d.speciesId];
+  const supported = Object.entries(SPECIES).filter(([, x]) => x.status === 'supported');
+  return `<div class="wrap page">
+    <div class="page-head"><p class="crumb"><a href="#mylistings" data-go="mylistings">← My Listings</a></p><h1>${d.id ? 'Edit listing' : 'Create your listing'}</h1>
+      ${d.intakeId ? `<div class="notice ok"><strong>Filled in from your rehoming answers</strong><span>Species, quantity, condition, location and timing came from intake <span class="mono">${esc(d.intakeId)}</span>. Check them and add a description.</span></div>` : ''}
+    </div>
+    <div class="two">
+      <form class="panel stack" data-form="listing" novalidate>
+        <div class="form-grid">
+          <div class="field full ${errCls('title')}"><label for="title">Title <span class="req">*</span></label><input type="text" id="title" name="title" value="${esc(d.title)}" maxlength="80" data-live="draft"><span class="hint">10–80 characters. Say what it is and how many.</span>${fieldErr('title')}</div>
+          <div class="field"><label for="speciesId2">Species</label><select id="speciesId2" name="speciesId" data-live="draft" ${d.intakeId ? 'disabled' : ''}>${supported.map(([id, x]) => `<option value="${id}" ${d.speciesId === id ? 'selected' : ''}>${esc(x.common)}</option>`).join('')}</select>${d.intakeId ? '<span class="hint">Locked to the species checked in your guidance.</span>' : ''}</div>
+          <div class="field ${errCls('qty')}"><label for="qty">Quantity <span class="req">*</span></label><input type="number" id="qty" name="qty" min="1" value="${esc(d.qty)}" data-live="draft">${fieldErr('qty')}</div>
+          <div class="field ${errCls('location')}"><label for="loc">Location <span class="req">*</span></label><input type="text" id="loc" name="location" value="${esc(d.location)}" data-live="draft">${fieldErr('location')}</div>
+          <div class="field"><label for="cond">Condition</label><select id="cond" name="condition" data-live="draft">${Object.entries(CONDITION).filter(([k]) => k !== 'unwell').map(([k, v]) => `<option value="${k}" ${d.condition === k ? 'selected' : ''}>${v}</option>`).join('')}</select></div>
+          <div class="field"><label for="urg">Available</label><select id="urg" name="urgency" data-live="draft">${Object.entries(URGENCY).map(([k, v]) => `<option value="${k}" ${d.urgency === k ? 'selected' : ''}>${v}</option>`).join('')}</select></div>
+          <div class="field full ${errCls('description')}"><label for="desc">Description <span class="req">*</span></label><textarea id="desc" name="description" data-live="draft">${esc(d.description)}</textarea><span class="hint">At least 40 characters. Age, temperament and why you’re rehoming.</span>${fieldErr('description')}</div>
+          <div class="field full"><label for="care">Care notes</label><textarea id="care" name="careNotes" data-live="draft" placeholder="Food, temperature, tank mates">${esc(d.careNotes)}</textarea></div>
+        </div>
+        ${ui.errors && Object.keys(ui.errors).length ? `<div class="notice bad" role="alert"><strong>Fix ${Object.keys(ui.errors).length} thing${Object.keys(ui.errors).length > 1 ? 's' : ''} before publishing</strong></div>` : ''}
+        <div class="form-foot" style="margin-top:0">
+          <button type="button" class="btn btn-secondary" data-act="saveDraft">Save as draft</button>
+          <button type="submit" class="btn btn-primary">${d.status === 'active' ? 'Save changes' : 'Publish listing'}</button>
+        </div>
+      </form>
+      <aside class="stack sticky"><span class="label">Preview · how adopters see it</span><div id="preview">${card({ ...d, id: d.id || 'L-new' })}</div>${careWidget(d.speciesId)}</aside>
+    </div>
+  </div>`;
+}
+function validateListing(d) {
+  const e = {};
+  if (!d.title || d.title.length < 10) e.title = 'Use at least 10 characters.';
+  if (!(+d.qty >= 1)) e.qty = 'Enter 1 or more.';
+  if (!d.location || d.location.length < 3) e.location = 'Add a town and postcode district.';
+  if (!d.description || d.description.length < 40) e.description = `Add a bit more detail (${(d.description || '').length}/40 characters).`;
+  return e;
+}
+
+function renderMyListings() {
+  const mine = S.listings.filter(l => l.owner === S.user);
+  ui.tab ??= 'all';
+  const shown = ui.tab === 'all' ? mine : mine.filter(l => l.status === ui.tab);
+  const count = st => mine.filter(l => l.status === st).length;
+  const reqs = l => S.requests.filter(r => r.listingId === l.id && ['pending','accepted'].includes(r.status)).length;
+  const actions = l => {
+    if (ui.confirm === l.id) return `<span class="confirm-inline">Withdraw this listing? <button class="btn btn-danger btn-sm" data-act="withdrawListing" data-id="${l.id}">Withdraw</button><button class="btn btn-quiet btn-sm" data-act="cancelConfirm">Keep</button></span>`;
+    const b = [];
+    if (['draft','active'].includes(l.status)) b.push(`<button class="btn btn-quiet btn-sm" data-go="editor" data-id="${l.id}">Edit</button>`);
+    if (l.status === 'draft') b.push(`<button class="btn btn-secondary btn-sm" data-act="publishListing" data-id="${l.id}">Publish</button>`);
+    if (['active','reserved'].includes(l.status) && reqs(l)) b.push(`<button class="btn btn-secondary btn-sm" data-go="incoming" data-listing="${l.id}">Requests (${reqs(l)})</button>`);
+    if (['draft','active'].includes(l.status)) b.push(`<button class="btn btn-quiet btn-sm" data-act="askWithdraw" data-id="${l.id}" style="color:var(--bad)">Withdraw</button>`);
+    if (l.status === 'withdrawn') b.push(`<button class="btn btn-quiet btn-sm" data-act="restoreListing" data-id="${l.id}">Move to drafts</button>`);
+    return b.join(' ');
+  };
+  return `<div class="wrap page">
+    <div class="page-head row between" style="align-items:end"><div class="stack" style="gap:8px"><h1>My Listings</h1><p>Everything you’ve listed, and where each one is up to.</p></div><button class="btn btn-primary" data-go="rehome">New listing</button></div>
+    <div class="stats">
+      <div class="stat"><span class="label">Active</span><b>${count('active')}</b></div>
+      <div class="stat"><span class="label">Reserved</span><b>${count('reserved')}</b></div>
+      <div class="stat"><span class="label">Drafts</span><b>${count('draft')}</b></div>
+      <div class="stat"><span class="label">Rehomed</span><b>${count('rehomed')}</b></div>
+    </div>
+    <div class="tabs" role="tablist">${['all', ...LISTING_STATUS].map(t => `<button role="tab" aria-selected="${ui.tab === t}" data-act="lTab" data-tab="${t}">${t[0].toUpperCase() + t.slice(1)}<span class="count">${t === 'all' ? mine.length : count(t)}</span></button>`).join('')}</div>
+    ${shown.length ? `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Listing</th><th>Species</th><th>Status</th><th>Open requests</th><th>Listed</th><th><span class="skip">Actions</span></th></tr></thead><tbody>
+      ${shown.map(l => `<tr><td><a class="t-title" href="#listing" data-go="listing" data-id="${l.id}">${esc(l.title)}</a><div class="mono muted">${l.id}</div></td><td>${esc(sp(l).common)} × ${esc(l.qty)}</td><td>${chip(l.status)}</td><td class="mono">${reqs(l)}</td><td class="mono">${esc(l.created)}</td><td class="actions-cell">${actions(l)}</td></tr>`).join('')}
+    </tbody></table></div>` : `<div class="empty"><strong>No ${ui.tab} listings.</strong><span class="small">Listings appear here after you complete the rehoming questions.</span></div>`}
+  </div>`;
+}
+
+function habitatSummary(h) {
+  if (!h) return '';
+  return `<dl class="kv">
+    <dt>Habitat</dt><dd>${esc(h.type)}</dd><dt>Volume</dt><dd>${blank(h.volume) ? '—' : esc(h.volume) + ' L'}</dd>
+    <dt>Temperature</dt><dd>${blank(h.tempMin) ? '—' : `${esc(h.tempMin)}–${esc(h.tempMax)} °C`}</dd><dt>pH</dt><dd>${blank(h.ph) ? '—' : esc(h.ph)}</dd>
+    <dt>Filter</dt><dd>${esc(h.filter || '—')}</dd><dt>Cycled</dt><dd>${esc(h.cycled || '—')}</dd>
+    ${h.type === 'pond' ? `<dt>Depth</dt><dd>${blank(h.depth) ? '—' : esc(h.depth) + ' cm'}</dd>` : ''}
+    <dt>Living there</dt><dd style="font-family:var(--f-body)">${esc(h.inhabitants || '—')}</dd></dl>`;
+}
+function tracker(r) {
+  const steps = [['Request accepted', ['accepted','completed'].includes(r.status)], ['Owner confirmed', r.ownerConfirmed], ['Adopter confirmed', r.adopterConfirmed], ['Rehoming complete', r.status === 'completed']];
+  const firstTodo = steps.findIndex(s => !s[1]);
+  return `<ol class="track" aria-label="Handover progress">${steps.map(([t, d], i) => `<li class="${d ? 'done' : i === firstTodo ? 'now' : ''}">${t}${d ? '<span class="skip"> (done)</span>' : ''}</li>`).join('')}</ol>`;
+}
+function renderIncoming({ listing }) {
+  const all = RequestService.listForOwner(S.user).filter(r => r.status !== 'withdrawn');
+  if (!all.length) return `<div class="wrap page"><div class="page-head"><h1>Incoming requests</h1></div><div class="empty"><strong>No requests yet.</strong><span class="small">When an adopter sends a request for one of your listings, it appears here.</span></div></div>`;
+  ui.sel ??= (listing && all.find(r => r.listingId === listing)?.id) || all.find(r => r.status === 'pending')?.id || all[0].id;
+  const r = R(ui.sel), l = L(r.listingId), s = sp(l);
+  const groups = [...new Set(all.map(x => x.listingId))];
+  const accepted = S.requests.find(x => x.listingId === l.id && x.status === 'accepted');
+  let actions = '';
+  if (r.status === 'pending') {
+    actions = accepted ? `<div class="notice warn"><strong>On hold</strong><span>You accepted another request for this listing. Only one request can be accepted.</span></div>`
+      : ui.confirm === r.id + 'decline' ? `<span class="confirm-inline">Decline ${esc(USERS[r.adopter].short)}’s request? <button class="btn btn-danger btn-sm" data-act="decline" data-id="${r.id}">Decline</button><button class="btn btn-quiet btn-sm" data-act="cancelConfirm">Cancel</button></span>`
+      : `<div class="row"><button class="btn btn-primary" data-act="accept" data-id="${r.id}">Accept request</button><button class="btn btn-danger" data-act="askDecline" data-id="${r.id}">Decline</button></div><p class="small muted">Accepting reserves the listing and hides it from browsing.</p>`;
+  } else if (r.status === 'accepted') {
+    actions = `<div class="stack"><h3>Handover</h3>${tracker(r)}
+      ${r.ownerConfirmed ? `<p class="small">You confirmed the handover. Waiting for ${esc(USERS[r.adopter].short)} to confirm.</p>` : `<p class="small">Once the ${s.kind === 'plant' ? 'plants have' : 'animals have'} been handed over, confirm it here. Both of you need to confirm.</p><div><button class="btn btn-primary" data-act="ownerConfirm" data-id="${r.id}">Confirm handover happened</button></div>`}
+      ${!r.adopterConfirmed ? `<div class="demo"><span class="label">Demo control</span><span>The adopter confirms in their own My Requests page. Use this to play their side.</span><div><button class="btn btn-secondary btn-sm" data-act="simAdopterConfirm" data-id="${r.id}">Confirm as ${esc(USERS[r.adopter].short)}</button></div></div>` : ''}</div>`;
+  } else if (r.status === 'completed') actions = `<div class="stack"><h3>Handover</h3>${tracker(r)}<div class="notice ok"><strong>Rehoming complete</strong><span>The listing is marked rehomed and removed from browsing.</span></div></div>`;
+  else actions = `<p class="muted small">You declined this request.</p>`;
+  return `<div class="wrap page">
+    <div class="page-head"><h1>Incoming requests</h1><p>Compare adopters by their introduction and habitat. Only the details needed to decide are shared with you.</p></div>
+    <div class="two-rev">
+      <nav class="rlist" aria-label="Requests">${groups.map(g => `<div class="grp label">${esc(L(g).title)}</div>${all.filter(x => x.listingId === g).map(x => `<button data-act="selReq" data-id="${x.id}" aria-current="${x.id === r.id}"><span class="row between"><strong>${esc(USERS[x.adopter].short)}</strong>${chip(x.status)}</span><span class="small muted">${esc(x.created)} · <span class="mono">${x.id}</span></span></button>`).join('')}`).join('')}</nav>
+      <article class="panel stack-lg" aria-live="polite">
+        <div class="stack" style="gap:8px"><div class="row">${chip(r.status)}<span class="mono muted">${r.id} · ${l.id}</span></div><h2>${esc(USERS[r.adopter].name)} would like your ${esc(s.common.toLowerCase())}</h2><p class="small muted">For “${esc(l.title)}” · sent ${esc(r.created)}</p></div>
+        <section class="stack" style="gap:8px"><h3>Their introduction</h3><p style="max-width:65ch">${esc(r.intro)}</p></section>
+        <section class="stack" style="gap:var(--s3)"><div class="row between"><h3>Habitat summary</h3>${chip(r.compat)}</div>${habitatSummary(r.summary)}<p class="small muted">Shared by the adopter’s habitat profile. Their address and profile name are not shown.</p></section>
+        ${actions}
+      </article>
+    </div>
+  </div>`;
+}
+
+function renderHabitat({ edit }) {
+  const mine = S.habitats.filter(h => h.owner === S.user);
+  const back = S.pending?.returnTo;
+  if (edit !== undefined) {
+    const h = ui.hDraft ??= (edit === 'new' ? { id: null, owner: S.user, name:'', type:'aquarium', volume:'', tempMin:'', tempMax:'', ph:'', filter:'', cycled:'', depth:'', light:'medium', inhabitants:'' } : { ...H(edit) });
+    const yn = (name, label, opts) => `<div class="field"><label for="${name}">${label}</label><select id="${name}" name="${name}"><option value="">Not sure / not set</option>${opts.map(([v, t]) => `<option value="${v}" ${h[name] === v ? 'selected' : ''}>${t}</option>`).join('')}</select></div>`;
+    return `<div class="wrap page" style="max-width:820px">
+      <div class="page-head"><p class="crumb"><a href="#habitat" data-act="habCancel">← My Habitat</a></p><h1>${h.id ? 'Edit habitat' : 'Add a habitat'}</h1><p>Fill in what you know. Gaps are fine; the compatibility check will tell you what’s missing.</p></div>
+      <form class="panel stack" data-form="habitat" novalidate>
+        <div class="form-grid">
+          <div class="field full ${errCls('name')}"><label for="hname">Name <span class="req">*</span></label><input type="text" id="hname" name="name" value="${esc(h.name)}" placeholder="e.g. Living room tank"><span class="hint">Only you see this name.</span>${fieldErr('name')}</div>
+          <fieldset class="field full"><legend>Type</legend><div class="choices">
+            <label class="choice"><input type="radio" name="type" value="aquarium" ${h.type === 'aquarium' ? 'checked' : ''} data-rerender><strong>Aquarium</strong><span>Indoor tank</span></label>
+            <label class="choice"><input type="radio" name="type" value="pond" ${h.type === 'pond' ? 'checked' : ''} data-rerender><strong>Pond</strong><span>Outdoor pond</span></label></div></fieldset>
+          <div class="field ${errCls('volume')}"><label for="volume">Volume (litres)</label><input type="number" id="volume" name="volume" value="${esc(h.volume)}" min="5">${fieldErr('volume')}</div>
+          ${h.type === 'pond' ? `<div class="field"><label for="depth">Deepest point (cm)</label><input type="number" id="depth" name="depth" value="${esc(h.depth)}"></div>` : `<div class="field"><label for="ph">pH</label><input type="number" id="ph" name="ph" step="0.1" value="${esc(h.ph)}">${fieldErr('ph')}</div>`}
+          <div class="field ${errCls('tempMin')}"><label for="tempMin">Lowest temperature (°C)</label><input type="number" id="tempMin" name="tempMin" value="${esc(h.tempMin)}">${fieldErr('tempMin')}</div>
+          <div class="field ${errCls('tempMax')}"><label for="tempMax">Highest temperature (°C)</label><input type="number" id="tempMax" name="tempMax" value="${esc(h.tempMax)}">${fieldErr('tempMax')}</div>
+          ${h.type === 'pond' ? `<div class="field"><label for="ph">pH</label><input type="number" id="ph" name="ph" step="0.1" value="${esc(h.ph)}">${fieldErr('ph')}</div>` : ''}
+          ${yn('filter', 'Filter running?', [['yes','Yes'],['no','No']])}
+          ${yn('cycled', 'Filter cycled?', [['yes','Yes'],['no','No'],['unsure','Not sure']])}
+          <div class="field"><label for="light">Lighting</label><select id="light" name="light">${['low','medium','high'].map(v => `<option ${h.light === v ? 'selected' : ''}>${v}</option>`).join('')}</select></div>
+          <div class="field full"><label for="inh">What already lives there?</label><input type="text" id="inh" name="inhabitants" value="${esc(h.inhabitants)}" placeholder="e.g. 6 rasboras, 2 snails"></div>
+        </div>
+        <div class="form-foot" style="margin-top:0"><button type="button" class="btn btn-secondary" data-act="habCancel">Cancel</button><button class="btn btn-primary" type="submit">Save habitat${back ? ' and return to check' : ''}</button></div>
+      </form></div>`;
+  }
+  return `<div class="wrap page">
+    <div class="page-head row between" style="align-items:end"><div class="stack" style="gap:8px"><h1>My Habitat</h1><p>Save each tank or pond once and reuse it whenever you check a listing.</p></div><button class="btn btn-primary" data-act="habEdit" data-id="new">Add a habitat</button></div>
+    ${mine.length ? `<div class="hcards">${mine.map(h => {
+      const missing = ['volume','tempMin','ph','filter','cycled'].filter(k => blank(h[k]) || h[k] === 'unsure').length;
+      return `<article class="hcard"><div class="row between"><h3>${esc(h.name)}</h3><span class="mono muted">${h.id}</span></div>
+        <div class="row">${chip(h.type).replace('chip ', 'chip pri plain ')}${missing ? `<span class="chip warn">${missing} detail${missing > 1 ? 's' : ''} missing</span>` : '<span class="chip ok">complete</span>'}</div>
+        ${habitatSummary(h)}<div><button class="btn btn-secondary btn-sm" data-act="habEdit" data-id="${h.id}">Edit</button></div></article>`; }).join('')}</div>`
+    : `<div class="empty"><strong>No habitats yet.</strong><button class="btn btn-primary btn-sm" data-act="habEdit" data-id="new">Add your first habitat</button></div>`}
+  </div>`;
+}
+
+function rbar(b) {
+  const pc = v => Math.max(0, Math.min(100, (v - b.lo) / (b.hi - b.lo) * 100));
+  const ticks = b.unit === 'pH' ? [5,6,7,8,9] : [0,8,16,24,32];
+  return `<div aria-hidden="true"><div class="rbar"><div class="trk"></div><div class="ok-range" style="left:${pc(b.min)}%;width:${pc(b.max) - pc(b.min)}%"></div><div class="hab ${b.ok ? '' : 'fail'}" style="left:calc(${pc(b.a)}% - 2px);width:calc(${pc(b.b) - pc(b.a)}% + 4px)"></div></div>
+    <div class="rbar-scale">${ticks.map(t => `<span>${t}${b.unit === '°C' ? '°' : ''}</span>`).join('')}</div></div>`;
+}
+function renderCompat({ id }) {
+  const l = L(id);
+  if (!l) return `<div class="wrap page"><div class="empty"><strong>Choose a listing first.</strong><a class="btn btn-secondary" href="#browse" data-go="browse">Browse listings</a></div></div>`;
+  const s = sp(l), mine = S.habitats.filter(h => h.owner === S.user);
+  ui.hab ??= view.params.hab || mine[0]?.id;
+  const h = H(ui.hab);
+  const res = h ? evaluateCompat(l, h) : null;
+  const head = res && { potential_match:['ok','Potential match','Your habitat meets every supported rule for this listing.'],
+    needs_information:['warn','More information needed','Some details are missing from your habitat. Add them to get a result.'],
+    blocked:['bad','Not compatible','At least one essential condition isn’t met, so a request can’t be sent.'] }[res.outcome];
+  const icon = { pass:'✓', fail:'✕', missing:'?', advice:'i' };
+  return `<div class="wrap page">
+    <p class="crumb"><a href="#listing" data-go="listing" data-id="${l.id}">← ${esc(l.title)}</a></p>
+    <div class="page-head" style="margin-top:var(--s3)"><h1>Check compatibility</h1><p>We compare the listing’s care needs with your saved habitat and explain each result.</p></div>
+    <div class="two">
+      <div class="stack-lg">
+        ${!mine.length ? `<div class="empty"><strong>Add a habitat to run the check.</strong><button class="btn btn-primary btn-sm" data-act="habForCompat" data-id="new">Add a habitat</button></div>` : `
+        <div class="toolbar" style="margin-bottom:0"><div class="field"><label for="habSel">Compare with</label><select id="habSel" data-act-change="pickHab">${mine.map(x => `<option value="${x.id}" ${x.id === ui.hab ? 'selected' : ''}>${esc(x.name)} (${x.type})</option>`).join('')}</select></div>
+          <button class="btn btn-secondary" data-act="habForCompat" data-id="${h.id}">Edit this habitat</button><button class="btn btn-quiet" data-act="habForCompat" data-id="new">Add another</button></div>
+        <section class="outcome ${head[0]}"><div><div class="row">${chip(res.outcome)}<span class="mono muted">${l.id} × ${h.id}</span></div><h2>${head[1]}</h2><p class="muted">${head[2]}</p></div></section>
+        <section class="stack"><div class="row between"><h3>What we checked</h3><div class="legend"><span><i style="background:var(--primary-soft);border:1px solid var(--primary)"></i>Species range</span><span><i style="background:var(--ok)"></i>Your habitat</span></div></div>
+          <div class="crit">${res.checks.map(c => `<div class="crit-row"><span class="ico ${c.status}" aria-hidden="true">${icon[c.status]}</span><div class="what"><b>${esc(c.label)}</b><span class="small">${esc(c.detail)}</span>${c.bar ? rbar(c.bar) : ''}</div><span class="label">${{pass:'Met', fail:'Not met', missing:'Missing', advice:'Advice'}[c.status]}</span></div>`).join('')}</div>
+        </section>
+        <div class="row">
+          ${res.outcome === 'potential_match' ? `<button class="btn btn-primary" data-go="request" data-id="${l.id}" data-hab="${h.id}">Request adoption</button>` : ''}
+          ${res.outcome === 'needs_information' ? `<button class="btn btn-primary" data-act="habForCompat" data-id="${h.id}">Add missing details</button>` : ''}
+          ${res.outcome === 'blocked' ? `<button class="btn btn-primary" disabled aria-describedby="blk">Request adoption</button><span class="small muted" id="blk">Requests are blocked when an essential rule fails.</span>` : ''}
+          <a class="btn btn-quiet" href="#browse" data-go="browse">Browse other listings</a>
+        </div>
+        <p class="small muted">Example rules for Sprint 1. A match is a guide, not a guarantee that a species will thrive.</p>`}
+      </div>
+      <aside class="stack sticky">${card(l)}<div class="panel care"><h3>Care needs</h3><dl><dt>Temperature</dt><dd>${s.temp[0]}–${s.temp[1]} °C</dd><dt>pH</dt><dd>${s.ph[0].toFixed(1)}–${s.ph[1].toFixed(1)}</dd><dt>Minimum volume</dt><dd>${s.minVol} L</dd><dt>Habitat</dt><dd>${s.habitats.join(', ')}</dd>${s.minDepth ? `<dt>Depth</dt><dd>≥ ${s.minDepth} cm</dd>` : ''}</dl></div></aside>
+    </div>
+  </div>`;
+}
+
+function renderRequest({ id, hab }) {
+  const l = L(id), h = H(hab);
+  if (!l || !h) return `<div class="wrap page"><div class="empty"><strong>Run a compatibility check first.</strong><a class="btn btn-secondary" href="#browse" data-go="browse">Browse listings</a></div></div>`;
+  const res = evaluateCompat(l, h);
+  return `<div class="wrap page">
+    <p class="crumb"><a href="#compat" data-go="compat" data-id="${l.id}">← Compatibility result</a></p>
+    <div class="page-head" style="margin-top:var(--s3)"><h1>Request adoption</h1><p>${esc(USERS[l.owner].short)} will see your introduction and a summary of your habitat.</p></div>
+    <div class="two">
+      <form class="panel stack" data-form="request" novalidate>
+        <div class="field"><span class="small" style="font-weight:700">Habitat</span><div class="row between panel-quiet"><span><strong>${esc(h.name)}</strong> <span class="mono muted">${h.id}</span></span>${chip(res.outcome)}</div></div>
+        <div class="field ${errCls('intro')}"><label for="intro">Introduce yourself <span class="req">*</span></label><textarea id="intro" name="intro" placeholder="Your experience, your setup and when you could collect">${esc(ui.intro || '')}</textarea><span class="hint">At least 30 characters. Don’t include your phone number or address.</span>${fieldErr('intro')}</div>
+        <label class="check ${errCls('ack')}"><input type="checkbox" name="ack" id="ack"><span>I understand the compatibility result is a guide, and I’ll check the details with the owner before collecting.</span></label>${fieldErr('ack')}
+        ${ui.serviceError ? `<div class="notice bad" role="alert"><strong>Couldn’t send request</strong><span>${esc(ui.serviceError)}</span></div>` : ''}
+        <div class="form-foot" style="margin-top:0"><button type="button" class="btn btn-secondary" data-go="compat" data-id="${l.id}">Back</button><button type="submit" class="btn btn-primary">Send request</button></div>
+      </form>
+      <aside class="stack sticky"><span class="label">What the owner will see</span><div class="panel">${habitatSummary(safeSummary(h))}</div>${card(l)}</aside>
+    </div>
+  </div>`;
+}
+
+function renderMyRequests() {
+  const mine = RequestService.listForAdopter(S.user);
+  return `<div class="wrap page">
+    <div class="page-head"><h1>My Requests</h1><p>Track every adoption request you’ve sent.</p></div>
+    ${mine.length ? `<div class="stack">${mine.map(r => {
+      const l = L(r.listingId), s = sp(l);
+      let act = '';
+      if (r.status === 'pending') act = ui.confirm === r.id ? `<span class="confirm-inline">Withdraw this request? <button class="btn btn-danger btn-sm" data-act="withdrawReq" data-id="${r.id}">Withdraw</button><button class="btn btn-quiet btn-sm" data-act="cancelConfirm">Keep it</button></span>`
+        : `<div class="row"><button class="btn btn-quiet btn-sm" data-act="askWithdrawReq" data-id="${r.id}" style="color:var(--bad)">Withdraw request</button></div>
+           <div class="demo"><span class="label">Demo control</span><span>The owner decides in their Incoming requests page. Use these to play their side.</span><div class="row"><button class="btn btn-secondary btn-sm" data-act="simAccept" data-id="${r.id}">Owner accepts</button><button class="btn btn-secondary btn-sm" data-act="simDecline" data-id="${r.id}">Owner declines</button></div></div>`;
+      if (r.status === 'accepted') act = `${tracker(r)}${r.adopterConfirmed ? `<p class="small">You confirmed. Waiting for ${esc(USERS[l.owner].short)}.</p>` : `<div class="row"><button class="btn btn-primary" data-act="adopterConfirm" data-id="${r.id}">I’ve received them</button><span class="small muted">${r.ownerConfirmed ? `${esc(USERS[l.owner].short)} has already confirmed.` : 'Confirm only after the handover.'}</span></div>`}`;
+      if (r.status === 'completed') act = `${tracker(r)}<div class="notice ok"><strong>Rehoming complete</strong><span>Thanks for giving them a home.</span></div>`;
+      if (r.status === 'declined') act = `<p class="small muted">The owner chose another adopter or declined this request. <a href="#browse" data-go="browse">Browse other listings</a></p>`;
+      return `<article class="panel stack" style="gap:var(--s4)">
+        <div class="row between"><div class="stack" style="gap:4px"><h3><a href="#listing" data-go="listing" data-id="${l.id}">${esc(l.title)}</a></h3><span class="small muted">${esc(s.common)} · ${esc(l.location)} · owner ${esc(USERS[l.owner].short)} · sent ${esc(r.created)}</span></div><div class="row">${chip(r.status)}<span class="mono muted">${r.id}</span></div></div>
+        ${act}</article>`; }).join('')}</div>`
+    : `<div class="empty"><strong>You haven’t sent any requests.</strong><a class="btn btn-primary btn-sm" href="#browse" data-go="browse">Browse listings</a></div>`}
+  </div>`;
+}
+
+function renderMap() {
+  const rows = Object.entries(ROUTES).filter(([k]) => !['map','design'].includes(k));
+  return `<div class="wrap page">
+    <div class="page-head"><p class="label">Team reference</p><h1>Screen map</h1><p>Every screen in this prototype, who builds it, and the Sprint 1 tasks and backlog stories it covers. Use Open to jump straight to a screen with sample data.</p></div>
+    <div class="tbl-wrap"><table class="tbl map-tbl"><thead><tr><th>Screen</th><th>Owner</th><th>Sprint 1 tasks</th><th>Stories</th><th>Login</th><th></th></tr></thead><tbody>
+      ${rows.map(([k, r]) => `<tr><td>${esc(r.title)}</td><td>${esc(r.owner)}</td><td class="mono">${esc(r.tasks)}</td><td class="mono">${esc(r.stories)}</td><td>${r.auth ? 'Required' : 'No'}</td><td class="actions-cell"><button class="btn btn-quiet btn-sm" data-act="openScreen" data-route="${k}">Open</button></td></tr>`).join('')}
+    </tbody></table></div>
+    <div class="journeys" style="padding-bottom:0">
+      <div class="stack"><h2>Owner demo script</h2><ol class="reasons">
+        <li>Homepage → Rehome an animal or plant.</li><li>Choose Animal → Neon tetra, quantity 6 → Healthy, Moving home → any town, Within a month.</li>
+        <li>Review → See my guidance → Create my listing.</li><li>Log in (sample user). The editor opens pre-filled. Add a description and publish.</li>
+        <li>My Listings shows it as active; Browse shows it too.</li><li>Incoming requests → accept Priya’s goldfish request → confirm handover → play the adopter’s confirmation.</li></ol></div>
+      <div class="stack"><h2>Adopter demo script</h2><ol class="reasons">
+        <li>Browse → “School of eight neon tetras” → Check compatibility.</li><li>Log in. Living room tank gives a potential match.</li>
+        <li>Switch to Bedroom nano tank for a missing-information result; open “Pink hardy water lily” for a blocking mismatch.</li>
+        <li>Back on a match, Request adoption → write an introduction → Send.</li><li>My Requests shows it pending. The Cherry shrimp request is accepted: confirm you received them to complete it.</li></ol></div>
+    </div>
+    <section class="stack" style="margin-top:var(--s7)"><h2>Shared contract values</h2>
+      <div class="spec"><span class="label">Listing status</span><div class="row">${LISTING_STATUS.map(chip).join('')}</div></div>
+      <div class="spec"><span class="label">Request status</span><div class="row">${REQUEST_STATUS.map(chip).join('')}</div></div>
+      <div class="spec"><span class="label">Compatibility</span><div class="row">${COMPAT_OUTCOME.map(chip).join('')}</div></div>
+      <div class="spec"><span class="label">Guidance outcome</span><div class="row">${['eligible','needs_review','restricted'].map(chip).join('')}</div></div>
+      <div class="spec"><span class="label">ID prefixes</span><div class="row mono"><span>SP-### species</span><span>IC-### intake</span><span>L-#### listing</span><span>H-### habitat</span><span>R-### request</span><span>U-## user</span></div></div>
+    </section>
+  </div>`;
+}
+
+const PALETTE = [
+  ['--ink', 'Deep Ocean', '#12324A', 'Headings, body text, the SDG band'],
+  ['--primary', 'Ocean Teal', '#0B7A6E', 'Primary buttons, links, selected states'],
+  ['--primary-soft', 'Seafoam Tint', '#DDF3EC', 'Selected options, info panels, hero action panel'],
+  ['--weed', 'Seafoam', '#5CC4A6', 'Small highlights only: logo wave, hero marker'],
+  ['--bg', 'Coastal Mist', '#F4F8F7', 'Page background'],
+  ['--surface', 'White', '#FFFFFF', 'Cards, forms and panels'],
+  ['--line', 'Shoreline', '#D3E3DE', 'Borders and dividers'],
+  ['--ink-2', 'Tide Grey', '#4E6677', 'Secondary text, hints, captions'],
+  ['--ok', 'Match', '#1F7A4D', 'active, completed, potential_match'],
+  ['--warn', 'Caution', '#965A00', 'pending, reserved, needs_information'],
+  ['--bad', 'Stop', '#B4352C', 'declined, blocked, restricted, errors'],
+  ['--plate-trop', 'Plate: tropical', '#D6EFE9', 'Specimen plate for tropical animals'],
+];
+function renderDesign() {
+  return `<div class="wrap page">
+    <div class="page-head"><p class="label">Proposed by Shawn · for team agreement</p><h1>Coastal Trust design system</h1><p>One set of colours, type and components for every screen. Build with these tokens so the three feature areas feel like one product.</p></div>
+    <section class="stack-lg">
+      <div class="stack"><h2>Colour</h2><p class="muted" style="max-width:65ch">A light, calm palette. Deep ocean navy for text, ocean teal for actions, seafoam tints for selected and supporting panels, and a coastal mist background. Light theme only. Status colours are separate from the brand colour and always come with a text label.</p>
+        <div class="swatches">${PALETTE.map(([t, n, hex, use]) => `<div class="sw"><div class="chipc" style="background:var(${t})"></div><div class="info"><strong>${n}</strong><span class="mono">${hex} · ${t}</span><span class="small muted">${use}</span></div></div>`).join('')}</div></div>
+      <div class="stack"><h2>Type</h2>
+        <div class="spec"><span class="label">Display · Familjen Grotesk</span><span style="font-family:var(--f-display);font-size:var(--t-2xl);font-weight:700;letter-spacing:-.01em">Find the right water</span></div>
+        <div class="spec"><span class="label">Body · Atkinson Hyperlegible</span><p style="max-width:60ch">Designed by the Braille Institute for low-vision readers. Clear letter shapes support our accessibility story (CORE-002) and read well in long forms.</p></div>
+        <div class="spec"><span class="label">Data · IBM Plex Mono</span><span class="mono">L-1045 · 20–26 °C · pH 6.0–7.0 · ≥ 54 L</span></div>
+        <div class="spec"><span class="label">Scale</span><span class="mono">13 · 15 · 16 · 20 · 26 · 34 · 52 px</span></div>
+      </div>
+      <div class="stack"><h2>Components</h2>
+        <div class="spec"><span class="label">Buttons</span><div class="row"><button class="btn btn-primary">Publish listing</button><button class="btn btn-secondary">Save as draft</button><button class="btn btn-quiet">Change</button><button class="btn btn-danger">Decline</button><button class="btn btn-primary" disabled>Request adoption</button></div></div>
+        <div class="spec"><span class="label">Status chips</span><div class="row">${[...LISTING_STATUS, ...REQUEST_STATUS.filter(x => !LISTING_STATUS.includes(x)), ...COMPAT_OUTCOME].map(chip).join('')}</div></div>
+        <div class="spec"><span class="label">Fields</span><div class="form-grid" style="max-width:640px"><div class="field"><label for="dsa">Location <span class="req">*</span></label><input id="dsa" type="text" value="Uxbridge, UB8"><span class="hint">Town and postcode district</span></div><div class="field has-error"><label for="dsb">Quantity <span class="req">*</span></label><input id="dsb" type="number" value="0"><span class="err">Enter 1 or more.</span></div></div></div>
+        <div class="spec"><span class="label">Parameter strip</span>${params(SPECIES['SP-002'])}</div>
+        <div class="spec"><span class="label">Range bar</span><div style="max-width:420px">${rbar({ lo:0, hi:32, min:20, max:26, a:24, b:26, ok:true, unit:'°C' })}${rbar({ lo:0, hi:32, min:10, max:24, a:24, b:26, ok:false, unit:'°C' })}</div></div>
+        <div class="spec"><span class="label">Handover tracker</span>${tracker({ status:'accepted', ownerConfirmed:true, adopterConfirmed:false })}</div>
+        <div class="spec"><span class="label">Listing card</span><div style="max-width:320px">${card(L('L-1045'))}</div></div>
+      </div>
+      <div class="stack"><h2>Rules we follow</h2>
+        <div class="dont">
+          <div><b>No stock photos or AI fish art</b>Listings use a specimen plate: scientific name on a habitat-coloured panel. Real uploads come later.</div>
+          <div><b>No gradients or glow</b>Flat colour, one border style, 6px corners. Shadows only on floating toasts.</div>
+          <div><b>No emoji as icons</b>Use the two line glyphs (fish, leaf) and text labels.</div>
+          <div><b>Status needs words</b>Every colour state also has a text label, so it works for colour-blind users.</div>
+          <div><b>Numbers mean something</b>Show real units (°C, pH, litres, cm) in the mono face. No vanity stats.</div>
+          <div><b>Plain copy</b>Buttons say what happens: “Publish listing”, then a message saying “Published”.</div>
+          <div><b>Left-aligned, not centred</b>Content reads from the left. Only empty states are centred.</div>
+          <div><b>Keyboard and mobile first</b>Visible focus ring, 44px touch targets, one column under 900px.</div>
+        </div>
+      </div>
+    </section>
+  </div>`;
+}
+
+/* ---------- Guided demo flows: each step rebuilds state from the seed, so Back and Next always land in the same place ---------- */
+const DEMO_ANSWERS = { kind:'animal', speciesId:'SP-002', quantity:'6', condition:'healthy', reason:'moving', location:'Uxbridge, UB8', urgency:'month', details:'They share a 60 litre tank with a few cherry shrimp. I can include their food.' };
+const DEMO_DESC = 'Six neon tetras, about a year old and eating well. I’m moving to a flat and can’t take the tank. They’d suit a heated, planted community tank.';
+const DEMO_INTRO = 'Hi Aisha, I’ve just set up a 30 litre planted tank with low lighting and a cycled filter. The ferns would go on the rocks at the back. I can collect from Reading on a weekend.';
+const FLOWS = {
+  owner: {
+    label:'Flow 1 · Owner', short:'Flow 1 · Owner rehomes', title:'Rehome six neon tetras',
+    summary:'An owner who is moving answers the guided questions, gets an eligible outcome, signs in and publishes a pre-filled listing.',
+    covers:'F-01 to F-06 · S-01, S-02, S-04, S-05 · login return path',
+    steps: [
+      { actor:'Owner, signed out', title:'Start from the homepage', route:'home', hl:'.hero-ctas .btn-primary',
+        say:'Jordan is moving and can’t take their tetras. They choose “Rehome an animal or plant”. No account is needed yet.',
+        sys:'The homepage routes to the questionnaire. Nothing is saved to an account.', who:'Shared homepage · Farhan coordinates routes' },
+      { actor:'Owner, signed out', title:'Choose animal or plant', route:'rehome', hl:'.choices',
+        apply: s => { s.intake.step = 1; s.intake.answers = { kind:'animal' }; },
+        say:'The first answer decides which species and follow-up questions appear next.',
+        sys:'Answers are held in local draft state, never in the URL. <code>kind: "animal"</code>', who:'Farhan · F-01, F-02' },
+      { actor:'Owner, signed out', title:'Pick the species and quantity', route:'rehome', hl:'#speciesId',
+        apply: s => { s.intake.step = 2; Object.assign(s.intake.answers, { speciesId:'SP-002', quantity:'6' }); },
+        say:'They pick Neon tetra and enter 6. The species guide on the right shows its care needs straight away.',
+        sys:'Species and care ranges come from the species catalogue. <code>speciesId: "SP-002"</code>', who:'Farhan · F-02, F-05' },
+      { actor:'Owner, signed out', title:'Describe condition and reason', route:'rehome', hl:'form[data-form="intake"] fieldset',
+        apply: s => { s.intake.step = 3; Object.assign(s.intake.answers, { condition:'healthy', reason:'moving' }); },
+        say:'Healthy, moving home. Choosing anything other than healthy adds a required question about the problem.',
+        sys:'Conditional field: <code>condition !== "healthy"</code> shows the health question.', who:'Farhan · F-02' },
+      { actor:'Owner, signed out', title:'Location and timing', route:'rehome', hl:'#location',
+        apply: s => { s.intake.step = 4; Object.assign(s.intake.answers, DEMO_ANSWERS); },
+        say:'Town and postcode district only, plus how soon they need a new home.',
+        sys:'Location is stored as town and district so a public listing never shows a full address.', who:'Farhan · F-02' },
+      { actor:'Owner, signed out', title:'Check the answers', route:'review', hl:'.review',
+        say:'Every section has a Change link that jumps back to that step with the answers kept.',
+        sys:'Edited answers flow through to the guidance and the listing pre-fill.', who:'Farhan · F-03' },
+      { actor:'Owner, signed out', title:'Read the guidance', route:'guidance', hl:'[data-act="createFromIntake"]',
+        apply: s => { s.intake.id = 'IC-301'; s.seq.intake = 302; s.intake.outcome = evaluateIntake(s.intake.answers); },
+        say:'A supported, healthy species with no restriction gets the eligible outcome, which explains why and offers “Create my listing”.',
+        sys:'Example outcome <code>eligible</code>, intake saved as <code>IC-301</code>. Needs-review and restricted outcomes hide the listing button.', who:'Farhan · F-04' },
+      { actor:'Owner, signed out', title:'Log in when it matters', route:'signin', hl:'.notice.pri',
+        apply: s => { s.pending = { name:'editor', params:{ fromIntake:true }, label:'Listing editor' }; },
+        say:'Creating a listing needs an account, so Jordan is asked to log in. The panel says where they’ll go back to.',
+        sys:'Saved pending action: <code>{ route: "editor", fromIntake: true }</code>. After login the user returns there with answers intact.', who:'Shared · Farhan coordinates mock login' },
+      { actor:'Owner, signed in', title:'Listing editor, pre-filled', route:'editor', params:{ fromIntake:true }, hl:'.notice.ok',
+        apply: s => { s.user = ME; s.pending = null; },
+        ui: () => { const d = editorDraft(); d.title = 'Six neon tetras need a new home'; d.description = DEMO_DESC; },
+        say:'Species, quantity, condition, location and timing are already filled in. Jordan adds a title and description and checks the preview.',
+        sys:'Handoff from intake <code>IC-301</code>: speciesId, quantity, condition, location, urgency. The species is locked to the one that was checked.', who:'Farhan F-06 → Shawn S-01' },
+      { actor:'Owner, signed in', title:'Published to My Listings', route:'mylistings', hl:'.tbl tbody tr',
+        apply: s => {
+          s.listings.unshift({ id:'L-1051', owner:ME, speciesId:'SP-002', title:'Six neon tetras need a new home', qty:6, location:'Uxbridge, UB8', condition:'healthy', urgency:'month', status:'active', created:today(), intakeId:'IC-301', description:DEMO_DESC, careNotes:DEMO_ANSWERS.details });
+          s.seq.listing = 1052; s.intake = { step:1, answers:{}, outcome:null };
+        },
+        say:'Publishing validates the form, creates listing L-1051 and shows it as active on the owner’s dashboard.',
+        sys:'Listing created with <code>status: "active"</code>, <code>ownerId: "U-01"</code>, <code>intakeId: "IC-301"</code>.', who:'Shawn · S-01, S-04, S-05' },
+      { actor:'Anyone', title:'Visible in public browsing', route:'browse', hl:'[data-id="L-1051"]',
+        say:'Anyone can now find it in Browse. The card shows only the essentials; the details are on the listing page.',
+        sys:'Browse returns listings where <code>status = "active"</code>.', who:'Shawn · S-02' },
+    ],
+  },
+  adopter: {
+    label:'Flow 2 · Adopter', short:'Flow 2 · Adopter requests', title:'Check a habitat and request Java fern',
+    summary:'An adopter browses, logs in at the compatibility check, sees all three possible results, fixes a missing detail and sends a request.',
+    covers:'S-02, S-03 · M-01 to M-04, M-06, M-07 · S-08 submit',
+    setup: s => { s.requests = s.requests.filter(r => !['R-510','R-508'].includes(r.id)); },
+    steps: [
+      { actor:'Adopter, signed out', title:'Browse without an account', route:'browse', hl:'.grid-cards',
+        say:'Jordan has set up a new nano tank and wants plants for it. They browse without logging in.',
+        sys:'Public route. Only active listings are returned.', who:'Shawn · S-02' },
+      { actor:'Adopter, signed out', title:'Open a listing', route:'listing', params:{ id:'L-1044' }, hl:'[data-go="compat"]',
+        say:'The listing page shows the full details, the care needs and what to prepare. The main action is “Check compatibility”.',
+        sys:'Listing <code>L-1044</code> and species <code>SP-005</code> are passed to the compatibility check.', who:'Shawn S-03 + Farhan F-05' },
+      { actor:'Adopter, signed out', title:'Log in to use a saved habitat', route:'signin', hl:'.notice.pri',
+        apply: s => { s.pending = { name:'compat', params:{ id:'L-1044' }, label:'Compatibility check' }; },
+        say:'Habitats belong to an account, so this is where login is needed. Jordan comes straight back to this listing afterwards.',
+        sys:'Saved pending action: <code>{ route: "compat", listingId: "L-1044" }</code>.', who:'Shared · mock login' },
+      { actor:'Adopter, signed in', title:'Result: more information needed', route:'compat', params:{ id:'L-1044' }, ui:{ hab:'H-203' }, hl:'.outcome',
+        apply: s => { s.user = ME; s.pending = null; },
+        say:'Compared with the Bedroom nano tank, the pH is missing, so there’s no verdict yet. The button asks Jordan to add it.',
+        sys:'Outcome <code>needs_information</code>: at least one rule is missing input and none fail.', who:'Midhir · M-03, M-04' },
+      { actor:'Adopter, signed in', title:'For comparison: a blocking mismatch', route:'compat', params:{ id:'L-1046' }, ui:{ hab:'H-201' }, hl:'.crit',
+        say:'A pond lily compared with an indoor tank fails a hard rule. “Request adoption” is disabled and the reason is shown.',
+        sys:'Outcome <code>blocked</code>: the habitat type rule fails. In Sprint 2 the server also rejects a request like this.', who:'Midhir · M-04' },
+      { actor:'Adopter, signed in', title:'Add the missing detail', route:'habitat', params:{ edit:'H-203' }, hl:'#ph',
+        apply: s => { s.pending = { returnTo:{ id:'L-1044' } }; },
+        ui: () => ({ hDraft: { ...H('H-203'), ph:6.8 } }),
+        say:'Back on the Java fern, Jordan edits the saved nano tank and adds a pH of 6.8. Saving returns them to the check.',
+        sys:'Habitat <code>H-203</code> is updated once and reused for every future check.', who:'Midhir · M-01, M-02' },
+      { actor:'Adopter, signed in', title:'Result: potential match', route:'compat', params:{ id:'L-1044' }, ui:{ hab:'H-203' }, hl:'.crit',
+        apply: s => { H('H-203').ph = 6.8; s.pending = null; },
+        say:'Every rule now passes. Each row says what was checked and why, and “Request adoption” is enabled.',
+        sys:'Outcome <code>potential_match</code>.', who:'Midhir · M-03, M-04' },
+      { actor:'Adopter, signed in', title:'Write the request', route:'request', params:{ id:'L-1044', hab:'H-203' }, ui:{ intro:DEMO_INTRO }, hl:'#intro',
+        say:'A short introduction and the selected habitat. The right-hand side shows exactly what the owner will see.',
+        sys:'Calls <code>RequestService.submit({ listingId, adopterId, habitatId, intro })</code>.', who:'Midhir M-06 → Shawn S-08' },
+      { actor:'Adopter, signed in', title:'Track it in My Requests', route:'myrequests', hl:'article',
+        apply: s => { s.requests.unshift({ id:'R-512', listingId:'L-1044', adopter:ME, habitatId:'H-203', compat:'potential_match', intro:DEMO_INTRO, status:'pending', ownerConfirmed:false, adopterConfirmed:false, created:today(), summary:safeSummary(H('H-203')) }); s.seq.request = 513; },
+        say:'The request is pending. Jordan can withdraw it while it’s still pending.',
+        sys:'Request <code>R-512</code> created with <code>status: "pending"</code>.', who:'Midhir · M-07' },
+      { actor:'Owner → adopter', title:'The owner accepts', route:'myrequests', hl:'.track',
+        apply: s => { R('R-512').status = 'accepted'; L('L-1044').status = 'reserved'; },
+        say:'When the owner accepts (Flow 3 shows their screen), the same record updates here and the handover tracker appears.',
+        sys:'One shared request record, so the owner and adopter screens always show the same status.', who:'Shawn S-07 → Midhir M-07' },
+    ],
+  },
+  handover: {
+    label:'Flow 3 · Owner and adopter', short:'Flow 3 · Decision and handover', title:'Choose an adopter and complete the handover',
+    summary:'The owner compares two requests and accepts one. Both sides then confirm the handover, and the listing is marked rehomed.',
+    covers:'S-04 to S-08 · M-05, M-07 · REQ-002 to REQ-006',
+    setup: s => { s.user = ME; },
+    steps: [
+      { actor:'Owner', title:'Two requests arrive', route:'incoming', ui:{ sel:'R-501' }, hl:'.rlist',
+        say:'Jordan’s goldfish listing has two pending requests. The account menu shows the count too.',
+        sys:'<code>RequestService.listForOwner("U-01")</code>, grouped by listing.', who:'Shawn · S-06' },
+      { actor:'Owner', title:'Compare habitats', route:'incoming', ui:{ sel:'R-502' }, hl:'.kv',
+        say:'Each request shows the introduction and a short habitat summary: volume, temperature, pH and filtration. No address or profile name.',
+        sys:'Owner-safe summary supplied by the habitat module.', who:'Midhir M-05 → Shawn S-06' },
+      { actor:'Owner', title:'Decide', route:'incoming', ui:{ sel:'R-501' }, hl:'[data-act="accept"]',
+        say:'Priya has a larger, established tank, so Jordan accepts her request. Declining asks for confirmation first.',
+        sys:'Only the listing owner can accept or decline.', who:'Shawn · S-07' },
+      { actor:'Owner', title:'Accepted and reserved', route:'incoming', ui:{ sel:'R-501' }, hl:'.track',
+        apply: () => { R('R-501').status = 'accepted'; L('L-1042').status = 'reserved'; },
+        say:'The listing becomes reserved and leaves public browsing. The handover tracker starts.',
+        sys:'<code>accept("R-501")</code> sets the request to <code>accepted</code> and the listing to <code>reserved</code>.', who:'Shawn · S-07, S-08' },
+      { actor:'Owner', title:'The other request goes on hold', route:'incoming', ui:{ sel:'R-502' }, hl:'.notice.warn',
+        say:'Only one request per listing can be accepted, so Tom’s request is on hold.',
+        sys:'This rule lives in the request service, not just in which buttons are shown.', who:'Shawn · S-08' },
+      { actor:'Owner', title:'Owner dashboard', route:'mylistings', hl:'.tbl tbody tr',
+        say:'My Listings shows the goldfish listing as reserved, with its open request.',
+        sys:'Status matches across the list, detail and owner pages.', who:'Shawn · S-04, S-05' },
+      { actor:'Owner', title:'Owner confirms the handover', route:'incoming', ui:{ sel:'R-501' }, hl:'.track',
+        apply: () => { R('R-501').ownerConfirmed = true; },
+        say:'After Priya collects the fish, Jordan confirms. The request isn’t complete until the adopter confirms too.',
+        sys:'<code>confirmHandover("R-501", owner)</code> sets <code>ownerConfirmed: true</code>.', who:'Shawn · S-07' },
+      { actor:'Adopter', title:'The adopter’s side', route:'myrequests', hl:'[data-act="adopterConfirm"]',
+        say:'This is the adopter’s screen. Here Jordan is the adopter on a cherry shrimp request the owner has already confirmed; Priya sees the same for the goldfish.',
+        sys:'Adopter confirmation calls the same service with the adopter’s ID.', who:'Midhir · M-07' },
+      { actor:'System', title:'Both confirmed: rehomed', route:'incoming', ui:{ sel:'R-501' }, hl:'.notice.ok',
+        apply: () => { const r = R('R-501'); r.ownerConfirmed = r.adopterConfirmed = true; r.status = 'completed'; L('L-1042').status = 'rehomed'; R('R-502').status = 'declined'; },
+        say:'Once both sides confirm, the request is completed and the listing is marked rehomed. Tom’s request is closed.',
+        sys:'Request <code>completed</code>, listing <code>rehomed</code>, other pending requests <code>declined</code>.', who:'Shawn · S-07, S-08' },
+      { actor:'Anyone', title:'Gone from browsing', route:'browse', hl:'.grid-cards',
+        say:'The goldfish no longer appear in the public listings.',
+        sys:'Browse only returns active listings.', who:'Shawn · S-02' },
+      { actor:'Owner', title:'Kept in the owner’s history', route:'mylistings', ui:{ tab:'rehomed' }, hl:'.tbl tbody tr',
+        say:'The rehomed listing stays in My Listings as a record.',
+        sys:'Rehomed is a final state.', who:'Shawn · S-04' },
+    ],
+  },
+};
+let tour = null; // { flow, i, min }
+function showStep() {
+  const f = FLOWS[tour.flow], st = f.steps[tour.i];
+  const keepNotes = S.notes;
+  S = seed(); S.notes = keepNotes;
+  f.setup?.(S);
+  for (let j = 0; j <= tour.i; j++) f.steps[j].apply?.(S);
+  save();
+  navOpen = false; acctOpen = false;
+  ui = {}; view = { name: st.route, params: st.params || {} };
+  const extra = typeof st.ui === 'function' ? st.ui() : st.ui;
+  if (extra) Object.assign(ui, extra);
+  render(); renderTour();
+  const el = st.hl && document.querySelector('#main ' + st.hl);
+  if (el) { el.classList.add('tour-hl'); el.scrollIntoView({ block: 'center', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); }
+  else window.scrollTo({ top: 0 });
+}
+function renderTour() {
+  document.body.classList.toggle('touring', !!tour);
+  const box = $('#tour');
+  if (!tour) { box.innerHTML = ''; return; }
+  const f = FLOWS[tour.flow], st = f.steps[tour.i], n = f.steps.length;
+  box.innerHTML = tour.min
+    ? `<button class="btn btn-primary tour-pill" data-act="tourMin">${esc(f.short)} · step ${tour.i + 1} of ${n} · Show guide</button>`
+    : `<section class="tour" aria-label="Demo guide" aria-live="polite">
+      <div class="tour-top"><span class="label">${esc(f.short)}</span><button class="btn btn-quiet btn-sm" data-act="tourMin">Minimise</button></div>
+      <div class="tour-prog" aria-hidden="true"><span style="width:${(tour.i + 1) / n * 100}%"></span></div>
+      <p class="small muted">Step ${tour.i + 1} of ${n} · <strong style="color:var(--ink)">${esc(st.actor)}</strong></p>
+      <h3>${esc(st.title)}</h3>
+      <p>${esc(st.say)}</p>
+      <div class="tour-sys"><span class="label">Behind the scenes</span><p>${st.sys}</p><span class="tour-who">${esc(st.who)}</span></div>
+      <div class="row between"><button class="btn btn-secondary btn-sm" data-act="tourBack" ${tour.i === 0 ? 'disabled' : ''}>Back</button>
+        <div class="row" style="gap:6px"><button class="btn btn-quiet btn-sm" data-act="tourExit">Exit</button><button class="btn btn-primary btn-sm" data-act="tourNext">${tour.i === n - 1 ? 'Finish' : 'Next step'}</button></div></div>
+    </section>`;
+}
+function renderDemos() {
+  return `<div class="wrap page">
+    <div class="page-head"><p class="label">Team walkthrough</p><h1>Demo flows</h1>
+      <p>Three guided walkthroughs that cover both journeys from start to finish. Each one starts from fresh sample data. A guide panel says what the user does, what happens in the system and who builds it. Press Next and the prototype does the action for you.</p></div>
+    <div class="demo-grid">${Object.entries(FLOWS).map(([k, f]) => `<article class="path-card">
+      <div class="stack" style="gap:6px"><p class="label">${esc(f.label)}</p><h2>${esc(f.title)}</h2><p class="muted">${esc(f.summary)}</p></div>
+      <button class="btn btn-primary" data-act="tourStart" data-flow="${k}">Start this demo</button>
+      <ol class="steps">${f.steps.map(s => `<li><div><b>${esc(s.title)}</b><p>${esc(s.actor)}</p></div></li>`).join('')}</ol>
+      <p class="mono small muted">${esc(f.covers)}</p>
+    </article>`).join('')}</div>
+  </div>`;
+}
+
+/* ---------- Event wiring ---------- */
+const actions = {
+  tourStart(el) { tour = { flow: el.dataset.flow, i: 0, min: false }; showStep(); },
+  tourNext() { if (tour.i < FLOWS[tour.flow].steps.length - 1) { tour.i++; showStep(); } else { tour = null; renderTour(); go('demos'); toast('Demo finished'); } },
+  tourBack() { if (tour.i > 0) { tour.i--; showStep(); } },
+  tourExit() { tour = null; renderTour(); go('demos'); },
+  tourMin() { tour.min = !tour.min; renderTour(); },
+  menu() { navOpen = !navOpen; renderHead(); $('.menu-btn').focus(); },
+  acctMenu() { acctOpen = !acctOpen; renderHead(); (acctOpen ? $('#acctPanel .dd-item') : $('.dd-btn'))?.focus(); },
+  howItWorks() {
+    if (view.name !== 'home') go('home', {}, { keepFocus: true }); else { navOpen = false; renderHead(); }
+    const how = document.getElementById('how');
+    how.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    how.querySelector('h2').focus({ preventScroll: true });
+  },
+  toggleNotes() { S.notes = !S.notes; save(); renderNotes(); },
+  reset() { tour = null; renderTour(); const keep = S.notes; S = seed(); S.notes = keep; save(); ui = {}; go('home'); toast('Sample data reset'); },
+  signout() { S.user = null; save(); go('home'); toast('Signed out'); },
+  filter(el) { ui[el.dataset.key] = el.dataset.val; render(); },
+  clearFilters() { ui.kind = 'all'; ui.q = ''; ui.hab = 'any'; render(); },
+  intakeBack() { captureIntake(); S.intake.step--; ui.errors = null; save(); render(); },
+  editStep(el) { S.intake.step = +el.dataset.step; save(); go('rehome'); },
+  submitIntake() { S.intake.id = S.intake.id || 'IC-' + (S.seq.intake++); S.intake.outcome = evaluateIntake(S.intake.answers); save(); go('guidance'); },
+  newIntake() { S.intake = { step:1, answers:{}, outcome:null }; save(); go('rehome'); },
+  createFromIntake() { go('editor', { fromIntake: true }); },
+  authTab(el) { ui.tab = el.dataset.tab; render(); },
+  saveDraft() { saveListing('draft'); },
+  lTab(el) { ui.tab = el.dataset.tab; render(); },
+  askWithdraw(el) { ui.confirm = el.dataset.id; render(); },
+  cancelConfirm() { ui.confirm = null; render(); },
+  withdrawListing(el) { const l = L(el.dataset.id); l.status = 'withdrawn'; S.requests.forEach(r => { if (r.listingId === l.id && r.status === 'pending') r.status = 'declined'; }); ui.confirm = null; save(); render(); toast('Listing withdrawn'); },
+  publishListing(el) { const l = L(el.dataset.id); const e = validateListing(l); if (Object.keys(e).length) { go('editor', { id: l.id }); ui.errors = e; render(); return; } l.status = 'active'; save(); render(); toast('Published. It now appears in Browse.'); },
+  restoreListing(el) { L(el.dataset.id).status = 'draft'; save(); render(); toast('Moved to drafts'); },
+  selReq(el) { ui.sel = el.dataset.id; ui.confirm = null; render(); },
+  accept(el) { tryService(() => RequestService.accept(el.dataset.id, S.user), 'Request accepted. The listing is now reserved.'); },
+  askDecline(el) { ui.confirm = el.dataset.id + 'decline'; render(); },
+  decline(el) { tryService(() => RequestService.decline(el.dataset.id, S.user), 'Request declined'); ui.confirm = null; render(); },
+  ownerConfirm(el) { tryService(() => RequestService.confirmHandover(el.dataset.id, S.user), 'Handover confirmed'); },
+  simAdopterConfirm(el) { const r = R(el.dataset.id); tryService(() => RequestService.confirmHandover(r.id, r.adopter), 'Adopter confirmed the handover'); },
+  adopterConfirm(el) { tryService(() => RequestService.confirmHandover(el.dataset.id, S.user), 'Handover confirmed'); },
+  askWithdrawReq(el) { ui.confirm = el.dataset.id; render(); },
+  withdrawReq(el) { ui.confirm = null; tryService(() => RequestService.withdraw(el.dataset.id, S.user), 'Request withdrawn'); },
+  simAccept(el) { const r = R(el.dataset.id); tryService(() => RequestService.accept(r.id, L(r.listingId).owner), 'The owner accepted your request'); },
+  simDecline(el) { const r = R(el.dataset.id); tryService(() => RequestService.decline(r.id, L(r.listingId).owner), 'The owner declined your request'); },
+  habEdit(el) { ui.hDraft = null; ui.errors = null; go('habitat', { edit: el.dataset.id }); },
+  habCancel() { const back = S.pending?.returnTo; if (back) { S.pending = null; save(); go('compat', back); } else go('habitat'); },
+  habForCompat(el) { S.pending = { returnTo: { id: view.params.id } }; save(); ui.hDraft = null; go('habitat', { edit: el.dataset.id }); },
+  openScreen(el) {
+    const k = el.dataset.route;
+    const needs = { listing:{ id:'L-1045' }, compat:{ id:'L-1045' }, request:{ id:'L-1045', hab:'H-201' }, editor:{ id:'L-1048' } };
+    if (['review','guidance'].includes(k) && !S.intake.answers.speciesId) { S.intake.answers = { kind:'animal', speciesId:'SP-002', quantity:'6', condition:'healthy', reason:'moving', location:'Uxbridge, UB8', urgency:'month' }; S.intake.outcome = evaluateIntake(S.intake.answers); save(); }
+    go(k, needs[k] || {});
+  },
+};
+function tryService(fn, okMsg) { try { fn(); toast(okMsg); } catch (e) { toast(e.message); } render(); }
+function captureIntake() { const f = $('form[data-form="intake"]'); if (f) Object.assign(S.intake.answers, readForm(f)); }
+function captureDraft() {
+  const f = $('form[data-form="listing"]'); if (!f) return;
+  const d = readForm(f); ui.draft = { ...ui.draft, ...d, qty: d.qty };
+}
+function saveListing(status) {
+  captureDraft();
+  const d = ui.draft;
+  const e = status === 'active' ? validateListing(d) : (!d.title ? { title: 'Add a title to save a draft.' } : {});
+  ui.errors = e;
+  if (Object.keys(e).length) { render(); const first = $('.has-error input, .has-error textarea'); first && first.focus(); return; }
+  const wasActive = d.status === 'active';
+  if (!d.id) { d.id = 'L-' + (S.seq.listing++); d.owner = S.user; d.created = today(); S.listings.unshift({ ...d, status }); }
+  else Object.assign(L(d.id), { ...d, status: wasActive ? 'active' : status });
+  if (d.intakeId) S.intake = { step:1, answers:{}, outcome:null };
+  save(); ui = {};
+  go('mylistings');
+  toast(status === 'active' ? (wasActive ? 'Changes saved' : 'Published. It now appears in Browse.') : 'Draft saved');
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && (acctOpen || navOpen)) { const was = acctOpen; acctOpen = false; navOpen = false; renderHead(); $(was ? '.dd-btn' : '.menu-btn')?.focus(); }
+});
+document.addEventListener('click', e => {
+  if (acctOpen && !e.target.closest('.dd')) { acctOpen = false; renderHead(); }
+  const a = e.target.closest('[data-act]');
+  if (a) { e.preventDefault(); actions[a.dataset.act]?.(a); return; }
+  const g = e.target.closest('[data-go]');
+  if (g) {
+    e.preventDefault();
+    const p = {}; if (g.dataset.id) p.id = g.dataset.id; if (g.dataset.hab) p.hab = g.dataset.hab; if (g.dataset.listing) p.listing = g.dataset.listing;
+    if (g.dataset.tab) { go(g.dataset.go, p); ui.tab = g.dataset.tab; render(); return; }
+    if (g.dataset.go === 'signin') S.pending = null;
+    go(g.dataset.go, p);
+  }
+});
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.matches('[data-act-change="pickHab"]')) { ui.hab = t.value; render(); return; }
+  if (t.matches('[data-rerender]')) {
+    if (t.form?.dataset.form === 'intake') { captureIntake(); if (t.name === 'kind') { delete S.intake.answers.speciesId; } save(); }
+    if (t.form?.dataset.form === 'habitat') Object.assign(ui.hDraft, readForm(t.form));
+    const id = t.id; render(); const again = id && document.getElementById(id); (again || $(`[name="${t.name}"]:checked`))?.focus();
+  }
+});
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (t.dataset.live === 'q') { ui.q = t.value; const pos = t.selectionStart; render(); const q = $('#q'); q.focus(); q.setSelectionRange(pos, pos); }
+  if (t.dataset.live === 'draft') { captureDraft(); $('#preview').innerHTML = card({ ...ui.draft, id: ui.draft.id || 'L-new' }); }
+});
+document.addEventListener('submit', e => {
+  e.preventDefault();
+  const f = e.target, kind = f.dataset.form;
+  if (kind === 'intake') {
+    captureIntake();
+    const errs = validateStep(S.intake.step, S.intake.answers);
+    ui.errors = errs;
+    if (Object.keys(errs).length) { save(); render(); $('.has-error input, .has-error select, .has-error textarea')?.focus(); return; }
+    ui.errors = null;
+    if (S.intake.step < 4) { S.intake.step++; save(); render(); window.scrollTo({ top: 0 }); } else { save(); go('review'); }
+  }
+  if (kind === 'signin') {
+    S.user = ME; const p = S.pending; S.pending = null; save();
+    toast('Signed in as Jordan Lee (sample user)');
+    if (p && p.name) go(p.name, p.params); else go('mylistings');
+  }
+  if (kind === 'listing') saveListing('active');
+  if (kind === 'habitat') {
+    const d = { ...ui.hDraft, ...readForm(f) };
+    ['volume','tempMin','tempMax','ph','depth'].forEach(k => d[k] = d[k] === '' || d[k] === undefined ? '' : +d[k]);
+    const err = {};
+    if (!d.name) err.name = 'Give this habitat a name.';
+    if (d.volume !== '' && (d.volume < 5 || d.volume > 100000)) err.volume = 'Enter between 5 and 100,000 litres.';
+    if (d.ph !== '' && (d.ph < 4 || d.ph > 10)) err.ph = 'pH is usually between 4 and 10.';
+    if (d.tempMin !== '' && d.tempMax !== '' && d.tempMin > d.tempMax) err.tempMax = 'Highest must be at least the lowest.';
+    if ((d.tempMin === '') !== (d.tempMax === '')) err[d.tempMin === '' ? 'tempMin' : 'tempMax'] = 'Add both temperatures, or leave both blank.';
+    ui.hDraft = d; ui.errors = err;
+    if (Object.keys(err).length) { render(); return; }
+    if (!d.id) { d.id = 'H-' + (S.seq.habitat++); S.habitats.push(d); } else Object.assign(H(d.id), d);
+    const back = S.pending?.returnTo; S.pending = null; save();
+    toast('Habitat saved');
+    if (back) go('compat', back), ui.hab = d.id, render(); else go('habitat');
+  }
+  if (kind === 'request') {
+    const d = readForm(f); ui.intro = d.intro; const err = {};
+    if (!d.intro || d.intro.length < 30) err.intro = `Write a little more (${(d.intro || '').length}/30 characters).`;
+    if (!f.ack.checked) err.ack = 'Tick the box to continue.';
+    ui.errors = err; ui.serviceError = null;
+    if (Object.keys(err).length) { render(); return; }
+    const { id, hab } = view.params;
+    try {
+      const r = RequestService.submit({ listingId: id, adopterId: S.user, habitatId: hab, intro: d.intro, compat: evaluateCompat(L(id), H(hab)).outcome });
+      go('myrequests'); toast(`Request ${r.id} sent to ${USERS[L(id).owner].short}`);
+    } catch (ex) { ui.serviceError = ex.message; render(); }
+  }
+});
+
+// Open the screen named in the link (#browse, #rehome, #design, #map …)
+const start = (location.hash || '').slice(1);
+go(ROUTES[start] && !['listing','compat','request','review','guidance'].includes(start) ? start : 'home', {}, { keepFocus: true });
+</script>
+
+</html>

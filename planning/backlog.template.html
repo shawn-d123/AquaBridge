@@ -1,0 +1,211 @@
+<title>AquaBridge Sprint 1 Backlog</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Familjen+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column (max 1080px): people summary, filter bar, tickets grouped by week, then story coverage and epics. Light only, Coastal Trust palette. */
+:root {
+  color-scheme: light;
+  --bg: #F4F8F7; --surface: #FFFFFF; --surface-2: #EAF3F0; --line: #D3E3DE;
+  --ink: #12324A; --ink-2: #4E6677; --primary: #0B7A6E; --primary-soft: #DDF3EC;
+  --warn: #965A00; --warn-soft: #FCEFD5; --bad: #B4352C; --bad-soft: #FBE3E0; --ok: #1F7A4D; --ok-soft: #DDF1E5;
+  --farhan: #6B4FA0; --farhan-soft: #EEE8F7; --shawn: #0B7A6E; --shawn-soft: #DDF3EC; --midhir: #B4562C; --midhir-soft: #FBE7DC; --all: #12324A; --all-soft: #E3EAF0;
+  --f-display: "Familjen Grotesk", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  --r: 6px;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.55; }
+.wrap { max-width: 1080px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 40px 72px; }
+h1, h2, h3, h4 { font-family: var(--f-display); margin: 0; line-height: 1.15; text-wrap: balance; letter-spacing: -0.01em; }
+h1 { font-size: clamp(1.9rem, 4vw, 2.5rem); }
+h2 { font-size: 1.375rem; }
+h3 { font-size: 1.125rem; font-weight: 600; }
+h4 { font-size: .9375rem; font-weight: 600; }
+p { margin: 0; }
+a { color: var(--primary); }
+.label { font-family: var(--f-mono); font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+.muted { color: var(--ink-2); }
+.mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+.head { display: grid; gap: 10px; margin-bottom: 24px; max-width: 72ch; }
+.head p { color: var(--ink-2); }
+.refs { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-bottom: 24px; }
+.ref { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; display: grid; gap: 4px; font-size: .9375rem; }
+.ref strong { font-family: var(--f-display); font-size: 1rem; }
+.people { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 24px; }
+@media (max-width: 760px) { .people { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.person { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; display: grid; gap: 6px; }
+.person b { font-family: var(--f-display); font-size: 1.125rem; }
+.meter { height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; }
+.meter span { display: block; height: 100%; }
+.person small { color: var(--ink-2); font-size: .8125rem; }
+.note { background: var(--primary-soft); border-radius: var(--r); padding: 14px 18px; display: grid; gap: 4px; margin-bottom: 24px; font-size: .9375rem; }
+.note strong { font-family: var(--f-display); font-size: 1rem; }
+.bar { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; padding: 12px 0; margin-bottom: 8px; border-bottom: 1px solid var(--line); position: sticky; top: env(safe-area-inset-top, 0px); background: var(--bg); z-index: 5; }
+.seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; background: var(--surface); }
+.seg button { font: inherit; font-size: .9375rem; padding: 8px 13px; border: 0; border-left: 1px solid var(--line); background: none; color: var(--ink-2); cursor: pointer; }
+.seg button:first-child { border-left: 0; }
+.seg button[aria-pressed="true"] { background: var(--primary-soft); color: var(--primary); font-weight: 700; }
+.check { display: inline-flex; gap: 8px; align-items: center; font-size: .9375rem; cursor: pointer; }
+.check input { width: 18px; height: 18px; accent-color: var(--primary); }
+.count { margin-left: auto; font-size: .875rem; color: var(--ink-2); }
+.tool { font: inherit; font-size: .875rem; background: none; border: 0; color: var(--primary); cursor: pointer; padding: 4px 0; text-decoration: underline; text-underline-offset: 3px; }
+:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+.week { margin-top: 32px; display: grid; gap: 14px; }
+.week-head { display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: baseline; }
+.week-head p { color: var(--ink-2); font-size: .9375rem; }
+.task { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); display: grid; grid-template-columns: 5px minmax(0, 1fr); overflow: hidden; }
+.task::before { content: ""; background: var(--c, var(--line)); }
+.task > div { padding: 16px 20px; display: grid; gap: 10px; min-width: 0; }
+.task-top { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; }
+.task-top .mono { font-size: .875rem; color: var(--ink-2); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-family: var(--f-mono); font-size: .75rem; padding: 2px 9px; border-radius: 999px; background: var(--surface-2); color: var(--ink-2); white-space: nowrap; }
+.chip.owner { background: var(--cs); color: var(--c); font-weight: 500; }
+.chip.high { background: var(--warn-soft); color: var(--warn); }
+.chip.rw { background: var(--primary); color: #FFFFFF; }
+.chip.later { background: var(--bad-soft); color: var(--bad); }
+.desc { font-size: .9375rem; max-width: 75ch; }
+details > summary { cursor: pointer; font-weight: 700; font-size: .9375rem; color: var(--primary); width: fit-content; }
+.detail { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 24px; margin-top: 12px; }
+.detail .full { grid-column: 1 / -1; }
+@media (max-width: 700px) { .detail { grid-template-columns: 1fr; } }
+.detail section { display: grid; gap: 6px; align-content: start; min-width: 0; }
+.detail ul { margin: 0; padding-left: 1.1em; display: grid; gap: 4px; font-size: .9375rem; }
+.detail p { font-size: .9375rem; }
+.ac { list-style: none; padding-left: 0 !important; }
+.ac li { display: grid; grid-template-columns: 18px 1fr; gap: 8px; }
+.ac li::before { content: ""; width: 14px; height: 14px; margin-top: 4px; border: 1.5px solid var(--ink-2); border-radius: 3px; }
+.story { background: var(--surface-2); border-radius: 4px; padding: 6px 10px; font-size: .875rem; }
+.story b { font-family: var(--f-mono); font-weight: 500; font-size: .8125rem; }
+.design { background: var(--primary-soft); border-radius: 4px; padding: 8px 12px; font-size: .9375rem; }
+.tbl-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); }
+table { width: 100%; border-collapse: collapse; font-size: .875rem; min-width: 680px; }
+th { text-align: left; font-family: var(--f-mono); font-size: .6875rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); font-weight: 500; background: var(--surface-2); padding: 9px 12px; }
+td { padding: 9px 12px; border-top: 1px solid var(--line); vertical-align: top; }
+td.mono { white-space: nowrap; }
+.section { margin-top: 48px; display: grid; gap: 12px; }
+.section > p { color: var(--ink-2); max-width: 72ch; }
+.epic-row { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 12px; padding: 12px 0; border-top: 1px solid var(--line); font-size: .9375rem; }
+.empty { padding: 32px; text-align: center; color: var(--ink-2); border: 1px dashed var(--line); border-radius: var(--r); margin-top: 24px; }
+</style>
+
+<div class="wrap">
+  <header class="head">
+    <p class="label">CS2701 · Group B14 · Jira project KAN · Draft for team agreement</p>
+    <h1>AquaBridge Sprint 1 backlog</h1>
+    <p>Every frontend ticket for Sprint 1. Each one says what to build, which states to handle, what data goes in and out, where to look in the prototype, and how we know it’s done. Open “What to build” on any ticket for the full detail.</p>
+  </header>
+  <div class="refs">
+    <div class="ref"><strong>Design reference</strong><span>The AquaBridge prototype is the visual spec. Its footer has the Demo flows, Screen map and Design system pages.</span><a href="/*PROTO*/" target="_blank" rel="noopener">Open the prototype</a></div>
+    <div class="ref"><strong>How tickets point to it</strong><span>“Prototype → My account → My Listings” means open that screen in the prototype. “Demo Flow 2 step 4” means start that demo and go to that step.</span></div>
+    <div class="ref"><strong>Before sharing</strong><span>Share both this page and the prototype with Farhan and Midhir from each page’s Share menu, or they won’t be able to open them.</span></div>
+  </div>
+  <section class="people" id="people" aria-label="Workload by person"></section>
+  <div class="note"><strong>How “50% by Reading Week” is measured</strong><span>A Reading Week target counts as done when it’s merged to main, its acceptance criteria are ticked in Jira and it runs in the shared app with sample data.</span></div>
+  <div class="bar" role="group" aria-label="Filters">
+    <div class="seg" id="who"></div>
+    <div class="seg" id="wk"></div>
+    <label class="check"><input type="checkbox" id="rw"> Reading Week targets only</label>
+    <button class="tool" id="expand" type="button">Expand all</button>
+    <span class="count" id="count" aria-live="polite"></span>
+  </div>
+  <div id="list"></div>
+
+  <section class="section" aria-labelledby="cov-h">
+    <h2 id="cov-h">Backlog story coverage</h2>
+    <p>All 40 stories from the final Deliverable 2 and the tickets that deliver their frontend. Three low or medium stories are deferred under the three-person plan; they stay in the backlog as tickets so nothing is lost.</p>
+    <div class="tbl-wrap"><table><thead><tr><th>Story</th><th>As a … I want … so that …</th><th>Priority</th><th>Tickets</th></tr></thead><tbody id="cov"></tbody></table></div>
+  </section>
+
+  <section class="section" aria-label="Epics">
+    <h2>Epics</h2>
+    <div id="epics"></div>
+  </section>
+</div>
+
+<script>
+const DATA = /*DATA*/;
+const COLORS = { Farhan:['var(--farhan)','var(--farhan-soft)'], Shawn:['var(--shawn)','var(--shawn-soft)'], Midhir:['var(--midhir)','var(--midhir-soft)'], 'All three':['var(--all)','var(--all-soft)'] };
+const WEEKS = { 1:['Week 1','Design, contracts and foundations'], 2:['Week 2','Individual feature builds'], 3:['Week 3','Connect, test and demo'], 4:['Later','Deferred, not committed for Sprint 1'] };
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const epicName = k => DATA.epics.find(e => e.key === k)?.name || k;
+const storyById = id => DATA.stories.find(s => s.id === id);
+const state = { who:'All', wk:'All', rw:false };
+let openAll = false;
+try { Object.assign(state, JSON.parse(localStorage.getItem('ab-backlog-v2') || '{}')); } catch (e) {}
+
+function people() {
+  return ['Shawn','Farhan','Midhir','All three'].map(p => {
+    const mine = DATA.tasks.filter(t => t.owner === p && t.week < 4), rw = mine.filter(t => t.rw).length;
+    const [c] = COLORS[p];
+    return `<div class="person"><span class="label">${p === 'All three' ? 'Shared by all' : esc(p)}</span><b>${mine.length} Sprint 1 ticket${mine.length > 1 ? 's' : ''}</b>
+      <div class="meter" aria-hidden="true"><span style="width:${mine.length ? rw / mine.length * 100 : 0}%;background:${c}"></span></div>
+      <small>${rw ? `${rw} Reading Week target${rw > 1 ? 's' : ''}` : 'Week 3 integration'}</small></div>`;
+  }).join('');
+}
+function seg(id, key, opts) {
+  document.getElementById(id).innerHTML = opts.map(([v, l]) => `<button type="button" data-key="${key}" data-val="${v}" aria-pressed="${String(state[key]) === String(v)}">${l}</button>`).join('');
+}
+const list = items => items && items.length ? `<ul>${items.map(i => `<li>${esc(i)}</li>`).join('')}</ul>` : '<p class="muted">None.</p>';
+function task(t) {
+  const [c, cs] = COLORS[t.owner];
+  return `<article class="task" style="--c:${c};--cs:${cs}" id="${t.id}"><div>
+    <div class="task-top"><span class="mono">${t.id}</span><h3>${esc(t.summary)}</h3></div>
+    <div class="chips"><span class="chip owner">${esc(t.owner)}</span><span class="chip">${t.type}</span><span class="chip ${t.priority === 'High' ? 'high' : ''}">${t.priority}</span><span class="chip">${esc(epicName(t.epic))}</span>${t.rw ? '<span class="chip rw">Reading Week target</span>' : ''}${t.week === 4 ? '<span class="chip later">Deferred</span>' : ''}</div>
+    <p class="desc">${esc(t.description)}</p>
+    <details ${openAll ? 'open' : ''}><summary>What to build, states and acceptance criteria</summary>
+      <div class="detail">
+        <section class="full"><h4>User stories</h4>${t.stories.length ? t.stories.map(id => { const s = storyById(id); return `<p class="story"><b>${id}</b> As ${/^(Owner|Adopter|Administrator)/.test(s.as) ? 'an' : 'a'} ${esc(s.as.toLowerCase())}, I want to ${esc(s.want.charAt(0).toLowerCase() + s.want.slice(1))}, so that ${esc(s.so)}.</p>`; }).join('') : '<p class="muted">Team process task.</p>'}</section>
+        <section class="full"><h4>What to build</h4>${list(t.build)}</section>
+        <section><h4>States to handle</h4>${list(t.states)}</section>
+        <section><h4>Data in and out</h4><p>${esc(t.data)}</p><h4 style="margin-top:8px">Depends on</h4><p>${esc(t.depends)}</p></section>
+        <section class="full"><h4>Where to look in the prototype</h4><p class="design">${esc(t.design)}</p></section>
+        <section class="full"><h4>Acceptance criteria</h4><ul class="ac">${t.ac.map(a => `<li>${esc(a)}</li>`).join('')}</ul></section>
+      </div>
+    </details>
+  </div></article>`;
+}
+function coverage() {
+  return DATA.stories.map(s => {
+    const ts = DATA.tasks.filter(t => t.stories.includes(s.id));
+    const deferred = ts.length && ts.every(t => t.week === 4);
+    return `<tr><td class="mono">${s.id}</td><td>As ${/^(Owner|Adopter|Administrator)/.test(s.as) ? 'an' : 'a'} ${esc(s.as.toLowerCase())}, I want to ${esc(s.want.charAt(0).toLowerCase() + s.want.slice(1))}, so that ${esc(s.so)}.</td><td>${s.pri}</td>
+      <td>${ts.map(t => `<a href="#${t.id}" class="mono" data-jump="${t.id}">${t.id}</a>`).join(', ')}${deferred ? ' <span class="chip later">Deferred</span>' : ''}</td></tr>`;
+  }).join('');
+}
+function render() {
+  document.getElementById('people').innerHTML = people();
+  seg('who', 'who', [['All','Everyone'],['Shawn','Shawn'],['Farhan','Farhan'],['Midhir','Midhir'],['All three','Shared']]);
+  seg('wk', 'wk', [['All','All weeks'],[1,'Week 1'],[2,'Week 2'],[3,'Week 3'],[4,'Later']]);
+  document.getElementById('rw').checked = state.rw;
+  document.getElementById('expand').textContent = openAll ? 'Collapse all' : 'Expand all';
+  const shown = DATA.tasks.filter(t => (state.who === 'All' || t.owner === state.who) && (state.wk === 'All' || String(t.week) === String(state.wk)) && (!state.rw || t.rw));
+  document.getElementById('count').textContent = `${shown.length} of ${DATA.tasks.length} tickets`;
+  const html = [1, 2, 3, 4].map(w => {
+    const items = shown.filter(t => t.week === w);
+    return items.length ? `<section class="week"><div class="week-head"><h2>${WEEKS[w][0]}</h2><p>${WEEKS[w][1]}</p></div>${items.map(task).join('')}</section>` : '';
+  }).join('');
+  document.getElementById('list').innerHTML = html || '<div class="empty">No tickets match these filters.</div>';
+  document.getElementById('cov').innerHTML = coverage();
+  document.getElementById('epics').innerHTML = DATA.epics.map(e => `<div class="epic-row"><span class="mono muted">${e.key}</span><div><b>${esc(e.name)}</b> · <span class="mono muted" style="font-size:.8125rem">${esc(e.stories)}</span><p class="muted">${esc(e.summary)}</p></div></div>`).join('');
+  try { localStorage.setItem('ab-backlog-v2', JSON.stringify(state)); } catch (e) {}
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-key]');
+  if (b) { state[b.dataset.key] = b.dataset.val; render(); return; }
+  const j = e.target.closest('[data-jump]');
+  if (j) {
+    e.preventDefault();
+    Object.assign(state, { who:'All', wk:'All', rw:false }); render();
+    const el = document.getElementById(j.dataset.jump);
+    el.querySelector('details').open = true;
+    el.scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  }
+});
+document.getElementById('rw').addEventListener('change', e => { state.rw = e.target.checked; render(); });
+document.getElementById('expand').addEventListener('click', () => { openAll = !openAll; render(); });
+render();
+</script>

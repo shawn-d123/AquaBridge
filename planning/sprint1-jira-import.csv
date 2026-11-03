@@ -1,0 +1,1332 @@
+﻿"Issue ID","Issue Type","Summary","Description","Priority","Labels","Labels","Labels","Parent","Assignee (map on import)"
+"1","Epic","Sprint 1 foundations","Repository, shared design system, data contracts, routes, accessibility and the end-to-end demo.
+
+Backlog stories: CORE-001, CORE-002, CORE-003","High","sprint-1","","","",""
+"2","Epic","Registration and login","Mock login and sign-up screens now; the university-provided component later.
+
+Backlog stories: REG-001 to REG-005","High","sprint-1","","","",""
+"3","Epic","Guided rehoming and species guidance","Questionnaire, answer review, guidance outcomes and species care data.
+
+Backlog stories: GUID-001 to GUID-006, SPEC-001 to SPEC-004","High","sprint-1","","","",""
+"4","Epic","Listings and discovery","Listing editor, browsing, listing details and the owner dashboard.
+
+Backlog stories: LIST-001 to LIST-007","High","sprint-1","","","",""
+"5","Epic","Habitat profiles and matching","Saved habitats, compatibility checks and owner-safe habitat summaries.
+
+Backlog stories: HAB-001 to HAB-006","High","sprint-1","","","",""
+"6","Epic","Adoption requests and handover","Shared request service, owner decisions, adopter tracking and two-sided handover.
+
+Backlog stories: REQ-001 to REQ-008, CORE-004","High","sprint-1","","","",""
+"100","Task","SH-01 Agree the frontend framework and set up the repository","Agree one frontend framework with the team, create the shared Git repository and set a folder structure where each person works in their own feature folder.
+
+h3. User stories
+* CORE-003: As an administrator, I want to follow a consistent interface across features and webpages, so that the application feels like one coherent product.
+
+h3. What to build
+* Short comparison of two or three options (for example React + Vite, Vue + Vite) against team experience and the Sprint 2 backend plan; record the decision
+* Repository with a starter app that runs with one command
+* Folders: src/shared (tokens, components, mocks, contracts), src/features/guidance, src/features/listings, src/features/habitat, src/features/requests, src/pages
+* Linting and formatting config so everyone’s code looks the same
+* A test runner configured with one example test
+* Pull request template with a checklist: acceptance criteria met, tested at 375px, keyboard checked
+
+h3. States to handle
+None.
+
+h3. Data in and out
+None.
+
+h3. Depends on
+Unblocks everyone. Do first.
+
+h3. Where to look in the prototype
+Prototype → footer → Screen map shows every screen and its owner; use it to name routes and folders.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Framework choice and reasons recorded in the README
+* Repository created; Farhan and Midhir have write access
+* Folder structure above exists with a README in each feature folder naming its owner
+* main is protected; changes arrive by pull request with one reviewer
+* README explains how to install, run and test the app
+
+_Plan ticket SH-01 · Week 1_","High","sprint-1","week-1","reading-week-target","1","Shawn"
+"101","Task","SH-02 Build shared design tokens and base components","Turn the agreed Coastal Trust palette and type into shared tokens and base components that every screen uses. Shawn supplied the direction; Midhir coordinates how it is applied.
+
+h3. User stories
+* CORE-002: As a user, I want to use the application with a keyboard and on mobile, so that I can complete the main journey accessibly.
+* CORE-003: As an administrator, I want to follow a consistent interface across features and webpages, so that the application feels like one coherent product.
+
+h3. What to build
+* Tokens: colours (Deep Ocean #12324A, Ocean Teal #0B7A6E, Seafoam #5CC4A6 and tint #DDF3EC, Coastal Mist #F4F8F7, Shoreline #D3E3DE, Tide Grey #4E6677, plus match / caution / stop status colours), type scale, spacing scale, 6px radius
+* Fonts: Familjen Grotesk (headings, menu), Atkinson Hyperlegible (body), IBM Plex Mono (IDs and water readings)
+* Button: primary, secondary, quiet, danger, small, large, disabled
+* Form controls: text input, number input, select, textarea, checkbox, choice card (radio styled as a card), field label, hint and error message
+* Status chip: one component that takes any listing, request, guidance or compatibility status value and picks the colour
+* Panel, notice (info, success, warning, error) and page header
+* Specimen plate: coloured panel with scientific name and a fish or leaf line icon, coloured by habitat group
+* Component examples page so others can copy usage
+
+h3. States to handle
+* Hover
+* Keyboard focus (visible ring)
+* Disabled
+* Error
+
+h3. Data in and out
+Status values from SH-03 contracts.
+
+h3. Depends on
+Needs SH-01. Unblocks every screen.
+
+h3. Where to look in the prototype
+Prototype → footer → Design system page (colours, type, buttons, chips, fields, range bar, tracker, card). Every screen in the prototype uses these.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Token values match the prototype’s design system page
+* All listed components exist and are used from one shared folder
+* Status chip renders every value in the contracts with a text label, not colour alone
+* Every interactive component shows a visible focus ring
+* Text contrast meets WCAG AA on the Coastal Mist and white backgrounds
+
+_Plan ticket SH-02 · Week 1_","High","sprint-1","week-1","reading-week-target","1","Midhir"
+"102","Task","SH-03 Define shared mock data contracts, IDs and fixtures","Agree the shapes and IDs that cross feature boundaries so everyone builds against the same sample data. Each person writes the fixtures for their own entities.
+
+h3. User stories
+* CORE-001: As a user, I want to access the data and actions that belong to me, so that all data and information is protected.
+
+h3. What to build
+* Contracts file with types or JSDoc for Species, IntakeOutcome, Listing, HabitatProfile, HabitatSummary, CompatibilityResult, AdoptionRequest, User
+* ID prefixes: SP- species, IC- intake, L- listing, H- habitat, R- request, U- user
+* Status enums: listing draft / active / reserved / rehomed / withdrawn; request pending / accepted / declined / withdrawn / completed; compatibility potential_match / needs_information / blocked; guidance eligible / needs_review / restricted
+* Fixtures: 10 species (incl. 2 restricted and ‘not sure’), 6+ listings across all statuses, 5 users, 3 habitats, requests in every status
+* A reset function that restores fixtures for demos
+
+h3. States to handle
+None.
+
+h3. Data in and out
+Owns the shared contracts file. Farhan owns species and intake fixtures, Midhir owns habitat fixtures, Shawn owns listing and request fixtures.
+
+h3. Depends on
+Needs SH-01. Unblocks F-05, F-06, S-02, S-08, M-01, M-03.
+
+h3. Where to look in the prototype
+Prototype → Screen map → ‘Shared contract values’ section lists every status and ID prefix.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* All three agree the contracts in a short meeting; changes after that go through a pull request reviewed by the affected owner
+* Every module imports fixtures from src/shared/mocks
+* No screen hard-codes its own copy of another person’s data
+* Reset restores the original fixtures
+
+_Plan ticket SH-03 · Week 1_","High","sprint-1","week-1","reading-week-target","1","Shawn"
+"103","Story","SH-04 Build the homepage, header, footer and route map","Shared homepage and navigation. Everyone supplies their routes; Farhan wires them together.
+
+h3. User stories
+* CORE-003: As an administrator, I want to follow a consistent interface across features and webpages, so that the application feels like one coherent product.
+* REG-005: As an owner, I want to reach the right account pages after signing in, so that I can manage my listings, habitat profile and requests.
+
+h3. What to build
+* Header: logo, Browse listings, Rehome, How it works; Log in and Sign up when signed out
+* Signed-in account menu (dropdown): name, Rehoming group (My Listings, Incoming requests with pending count), Adopting group (My Habitat, My Requests), Sign out
+* Active page highlighting, including parent sections (e.g. Browse stays active on a listing page)
+* Mobile menu below 900px: one Menu button opening all links stacked with the same groups
+* Homepage sections in order: hero with headline, two buttons and three reassurance points + aquarium illustration; How it works (two journey cards); Recently listed (3 cards); SDG 14 ‘never release’ band
+* Footer with project note and links
+* Routes for every screen plus a not-found page
+
+h3. States to handle
+* Signed out
+* Signed in with and without pending requests
+* Mobile menu open and closed
+* Not-found route
+
+h3. Data in and out
+Reads signed-in user (SH-05), pending request count (S-08), recent active listings (S-02).
+
+h3. Depends on
+Needs SH-02 for components. Uses S-02 cards for Recently listed.
+
+h3. Where to look in the prototype
+Prototype → homepage and header. Demo Flow 1 step 1. The aquarium illustration can be copied from the prototype source as an SVG.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Homepage shows both primary actions above the fold on a 1280×720 screen and at 375px
+* Account menu opens and closes with mouse, Enter and Escape, and closes when clicking outside
+* Every route in the screen map loads; unknown routes show the not-found page
+* Mobile menu works with keyboard and screen reader
+
+_Plan ticket SH-04 · Week 1_","High","sprint-1","week-1","reading-week-target","1","Farhan"
+"104","Story","SH-05 Login and sign-up screens with mock authentication and return-to-action","Mock signed-in and signed-out states, the login and sign-up screens, and route guards. The university-provided component replaces the form later, so keep it behind one small auth module.
+
+h3. User stories
+* REG-001: As a user, I want to create an account, so that I can save my listings, habitat information and requests.
+* REG-002: As a user, I want to sign in to my account, so that I can access my saved information.
+* REG-003: As a user, I want to log out of my account, so that someone else cannot use my session when I leave.
+* REG-004: As an owner, I want to see clear login and registration errors, so that I can correct my details and continue.
+* REG-005: As an owner, I want to reach the right account pages after signing in, so that I can manage my listings, habitat profile and requests.
+* CORE-001: As a user, I want to access the data and actions that belong to me, so that all data and information is protected.
+
+h3. What to build
+* Log in and Sign up tabs on one page: name (sign-up only), email, password, submit
+* ‘You’ll go back to: …’ notice when the user arrived from a guarded action
+* Auth module: currentUser, signIn, signOut, requireAuth(route) used by every guarded route
+* Pending-action store: remembers route and item ID (e.g. listing L-1044) in session storage, never in the URL
+* Sign out from the account menu
+
+h3. States to handle
+* Empty fields error
+* Invalid email format error
+* Arrived from guarded action
+* Arrived directly
+* Already signed in
+
+h3. Data in and out
+Provides currentUser (U-01 in mocks) to every module.
+
+h3. Depends on
+Needs SH-02, SH-04.
+
+h3. Where to look in the prototype
+Prototype → Log in page; Demo Flow 1 step 8 and Flow 2 step 3 show the return notice.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Guarded routes (editor, My Listings, Incoming requests, My Habitat, compatibility, request, My Requests) send signed-out users to login
+* After login the user lands on the page and item they were heading to
+* Questionnaire answers survive login and never appear in the URL
+* Empty or badly formatted email shows an error next to the field and focus moves there
+* Sign out hides account pages and returns to the homepage
+
+_Plan ticket SH-05 · Week 1_","High","sprint-1","week-1","reading-week-target","2","Farhan"
+"105","Task","SH-06 Set up the Jira board and daily update routine","Product Owner set-up so progress is visible every day. Farhan runs the daily routine as Scrum Master.
+
+h3. User stories
+Team process task.
+
+h3. What to build
+* Invite Farhan and Midhir to KAN
+* Board columns: To do, In progress, In review, Done
+* Labels: sprint-1, week-1/2/3, reading-week-target
+* Daily update template: done yesterday, doing today, blockers
+
+h3. States to handle
+None.
+
+h3. Data in and out
+None.
+
+h3. Depends on
+None.
+
+h3. Where to look in the prototype
+This backlog page is the source for the tickets.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Both members can see and move tickets
+* Reading Week targets are labelled
+* First daily update posted by all three
+
+_Plan ticket SH-06 · Week 1_","Medium","sprint-1","week-1","","1","Shawn"
+"106","Task","SH-07 Run the three end-to-end demo flows and fix what breaks","Integration checkpoint using the prototype’s Demo flows as the script.
+
+h3. User stories
+* CORE-002: As a user, I want to use the application with a keyboard and on mobile, so that I can complete the main journey accessibly.
+* CORE-003: As an administrator, I want to follow a consistent interface across features and webpages, so that the application feels like one coherent product.
+
+h3. What to build
+* Run each flow on the real app
+* Log every difference from the prototype or acceptance criteria as a Bug on the owner’s epic
+* Fix and re-run
+
+h3. States to handle
+None.
+
+h3. Data in and out
+Uses shared fixtures and reset.
+
+h3. Depends on
+All feature tickets.
+
+h3. Where to look in the prototype
+Prototype → footer → Demo flows (Flow 1 owner rehomes, Flow 2 adopter requests, Flow 3 decision and handover).
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Flow 1 runs from homepage to a visible listing without resetting data
+* Flow 2 shows needs-information, blocked and potential-match results and ends with a pending request
+* Flow 3 ends with the request completed and the listing rehomed
+* Every flow works by keyboard alone and at 375px
+
+_Plan ticket SH-07 · Week 3_","High","sprint-1","week-3","","1","All three"
+"107","Task","SH-08 Accessibility and responsive checklist for every screen","Midhir writes the checklist and checks each screen; each owner fixes their own screens.
+
+h3. User stories
+* CORE-002: As a user, I want to use the application with a keyboard and on mobile, so that I can complete the main journey accessibly.
+* LIST-006: As a visitor, I want to use a readable responsive listing interface, so that I can browse comfortably on different screens.
+
+h3. What to build
+* Checklist: keyboard order, visible focus, labels on every field, errors announced, contrast, 44px touch targets, no horizontal scroll at 375px, reduced-motion respected
+* A table of screens × checks in the repo wiki or README
+* Bug tickets for failures assigned to the screen owner
+
+h3. States to handle
+None.
+
+h3. Data in and out
+None.
+
+h3. Depends on
+Screens from all three.
+
+h3. Where to look in the prototype
+Prototype → Design system → ‘Rules we follow’.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Checklist published in the repo
+* Every screen in the screen map checked once in Week 2
+* Failures logged as bugs with the screen owner assigned
+
+_Plan ticket SH-08 · Week 2_","Medium","sprint-1","week-2","","1","Midhir"
+"108","Task","SH-09 Shared feedback patterns: toasts, confirmations, empty and error states","Small shared components so every feature reports success, errors and empty data the same way.
+
+h3. User stories
+* CORE-003: As an administrator, I want to follow a consistent interface across features and webpages, so that the application feels like one coherent product.
+* REQ-008: As an owner or adopter, I want to see request statuses clearly, so that I understand the application progress.
+
+h3. What to build
+* Toast for short confirmations (‘Published’, ‘Request sent’), announced to screen readers
+* Inline confirmation for destructive actions (withdraw, decline) instead of browser pop-ups
+* Empty state block: message + one action
+* Error notice for failed actions with a plain explanation
+* Not-found page content
+
+h3. States to handle
+* Success
+* Error
+* Empty
+* Confirm pending
+
+h3. Data in and out
+None.
+
+h3. Depends on
+Needs SH-02.
+
+h3. Where to look in the prototype
+Prototype: toast after publishing (Flow 1 step 10), inline ‘Withdraw this listing?’ in My Listings, empty state on Browse when filters match nothing.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Components exist in src/shared and are used by at least one screen per person
+* No screen uses alert() or confirm()
+* Toasts are announced by screen readers
+
+_Plan ticket SH-09 · Week 1_","High","sprint-1","week-1","reading-week-target","1","Midhir"
+"109","Story","F-01 Questionnaire shell with progress and Back/Next","Four-step form (Organism, Species, Condition, Location) that guests can use without an account.
+
+h3. User stories
+* GUID-001: As an owner, I want to start a guided rehoming questionnaire, so that I can understand my options without immediately creating an advert.
+
+h3. What to build
+* Page heading ‘Tell us about it’ with a one-line explanation
+* Progress bar with 4 labelled segments; current step announced to screen readers
+* Back and Continue buttons; last step says ‘Review my answers’
+* Draft store holding answers across steps and reloads in the same browser
+* Side panel with the species care widget (F-05) and a ‘Never release it’ notice
+
+h3. States to handle
+* First step (no Back)
+* Middle steps
+* Last step
+* Validation error on Continue
+* Returning with a saved draft
+
+h3. Data in and out
+Writes the draft intake object (kind, speciesId, quantity, condition, health, reason, location, urgency, details).
+
+h3. Depends on
+Needs SH-02.
+
+h3. Where to look in the prototype
+Prototype → Rehome. Demo Flow 1 steps 2–5.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Back and Continue keep all entered values
+* Continue validates the current step and moves focus to the first error
+* Draft survives a page reload
+* Works at 375px and by keyboard
+
+_Plan ticket F-01 · Week 1_","High","sprint-1","week-1","reading-week-target","3","Farhan"
+"110","Story","F-02 Organism-specific and conditional questions","The questions inside each step, showing follow-ups only when relevant.
+
+h3. User stories
+* GUID-002: As an owner, I want to record my species, quantity, condition, location and urgency, so that the platform can consider my circumstances.
+* SPEC-001: As an owner or adopter, I want to search the supported species list, so that I can select an organism consistently.
+
+h3. What to build
+* Step 1: choice cards ‘An animal’ / ‘A plant’
+* Step 2: species select filtered by type (plus ‘I’m not sure what it is’), quantity number; plants also get ‘Currently growing in: aquarium / pond’
+* Step 3: condition choice cards (Healthy, Minor issues, Unwell or under treatment); if not healthy a required ‘Describe the problem or treatment’ textarea; reason select (moving, closing tank, outgrown, no time, other)
+* Step 4: town and postcode district, urgency choice cards (within a week, within a month, no rush), optional details textarea
+* Changing animal/plant clears the species answer
+
+h3. States to handle
+* Animal path
+* Plant path
+* Healthy vs not healthy
+* Each validation error
+
+h3. Data in and out
+Species list from F-05.
+
+h3. Depends on
+Needs F-01, F-05.
+
+h3. Where to look in the prototype
+Prototype → Rehome steps 1–4; Design system → choice card and field error.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Animal and plant paths show only relevant questions
+* Health description is required only when condition is not healthy
+* Quantity must be 1–500; location must be at least 3 characters
+* Every error says how to fix it
+
+_Plan ticket F-02 · Week 2_","High","sprint-1","week-2","reading-week-target","3","Farhan"
+"111","Story","F-03 Answer review with change links","Summary of all answers before any guidance is shown.
+
+h3. User stories
+* GUID-003: As an owner, I want to review and amend my answers, so that the assessment is based on information I intended to supply.
+
+h3. What to build
+* Four groups (Organism, Species, Condition, Location and timing) as label/value tables
+* ‘Change’ link per group that opens that step
+* ‘Not given’ shown for empty optional answers
+* Buttons: Back, See my guidance
+
+h3. States to handle
+* All answered
+* Optional answers empty
+
+h3. Data in and out
+Reads draft intake.
+
+h3. Depends on
+Needs F-02.
+
+h3. Where to look in the prototype
+Prototype → Rehome → Review my answers. Demo Flow 1 step 6.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Change returns to the right step with answers kept
+* Edited answers show in review, guidance and listing pre-fill
+
+_Plan ticket F-03 · Week 2_","High","sprint-1","week-2","","3","Farhan"
+"112","Story","F-04 Guidance outcomes: eligible, needs review and restricted","Explained example outcomes with alternative next steps, clearly marked as illustrative, not legal or veterinary advice.
+
+h3. User stories
+* GUID-004: As an owner, I want to receive explained rehoming or advice pathways, so that I know the responsible action to consider.
+* GUID-005: As an owner, I want to be warned when identification or transfer rules are uncertain, so that I do not accidentally publish an inappropriate listing.
+* GUID-006: As an owner, I want to see other guidance when rehoming is not possible or urgent, so that I have a useful next step even without an online match.
+* SPEC-003: As a user, I want to see when species advice is incomplete or unverified, so that I can recognise missing or unverified information before making a decision.
+
+h3. What to build
+* Example rule function: restricted species → restricted; unidentified or unwell → needs_review; otherwise eligible
+* Outcome card with coloured edge, status chip, headline, one-line summary and ‘Why you’re seeing this’ reasons from the answers
+* Next steps list: eligible → ‘Also worth doing’; needs review → identify, wait for treatment, keep it where it is; restricted → keep caring, never release, contact a rescue or local authority
+* Urgent (within a week) adds a short-term suggestion
+* Buttons: Create my listing (eligible only), Change my answers, Start again
+* ‘Illustrative only’ notice
+
+h3. States to handle
+* Eligible
+* Needs review (unidentified)
+* Needs review (unwell)
+* Restricted
+* Urgent variant
+
+h3. Data in and out
+Produces IntakeOutcome { intakeId, outcome, reasons[] }.
+
+h3. Depends on
+Needs F-03, F-05.
+
+h3. Where to look in the prototype
+Prototype → Rehome → guidance (try Neon tetra, ‘I’m not sure’, and Red-eared slider). Demo Flow 1 step 7.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* All three outcomes reachable with sample answers
+* Only eligible shows Create my listing
+* Reasons reflect the actual answers
+* Every outcome says it is illustrative
+
+_Plan ticket F-04 · Week 2_","High","sprint-1","week-2","","3","Farhan"
+"113","Story","F-05 Species catalogue and care reference widget","Small agreed species list with care ranges that the listing page and compatibility check also read.
+
+h3. User stories
+* SPEC-001: As an owner or adopter, I want to search the supported species list, so that I can select an organism consistently.
+* SPEC-002: As an adopter, I want to read relevant requirements for a listed species, so that I can understand the care involved.
+* SPEC-003: As a user, I want to see when species advice is incomplete or unverified, so that I can recognise missing or unverified information before making a decision.
+
+h3. What to build
+* Species fixtures: id, common and scientific name, kind, group (tropical, coldwater, plant, pond), habitats, temperature range, pH range, minimum volume, minimum depth (ponds), light, care text, status (supported / restricted / unknown)
+* Care widget: name, scientific name, temperature, pH, volume, habitat, care text
+* Warning inside the widget for restricted or unidentified species
+* ‘Sample data, not verified by a specialist’ line
+
+h3. States to handle
+* No species chosen
+* Supported
+* Restricted
+* Unknown
+
+h3. Data in and out
+Exports getSpecies(id) and listSpecies(kind) for Shawn and Midhir.
+
+h3. Depends on
+Needs SH-03.
+
+h3. Where to look in the prototype
+Prototype → Rehome step 2 side panel; listing page ‘Care needs’ panel.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* At least 7 supported species (animals and plants), 2 restricted, 1 unknown
+* Widget shows correct values for each
+* Shawn and Midhir read species only through getSpecies/listSpecies
+
+_Plan ticket F-05 · Week 1_","High","sprint-1","week-1","reading-week-target","3","Farhan"
+"114","Story","F-06 Hand off an eligible intake to the listing editor","Pass a structured intake result to Shawn’s editor through the login checkpoint.
+
+h3. User stories
+* LIST-001: As an owner, I want to create a listing which is pre-filled from my questionnaire, so that I do not need to enter the same information twice.
+* GUID-004: As an owner, I want to receive explained rehoming or advice pathways, so that I know the responsible action to consider.
+
+h3. What to build
+* ‘Create my listing’ saves IntakeOutcome and the answers, then routes to the editor (via login if needed)
+* Clear the draft once a listing is published
+
+h3. States to handle
+* Signed in
+* Signed out → login → editor
+
+h3. Data in and out
+Payload: intakeId, speciesId, quantity, condition, location, urgency, reason, details, health.
+
+h3. Depends on
+Needs F-04, SH-05, S-01.
+
+h3. Where to look in the prototype
+Demo Flow 1 steps 7–9.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Editor opens pre-filled with no re-entry
+* Needs-review and restricted intakes cannot reach the editor, even by typing the route
+* Payload shape written into the shared contracts
+
+_Plan ticket F-06 · Week 2_","High","sprint-1","week-2","","3","Farhan"
+"115","Task","F-07 Test the guided rehoming journey","Frontend tests and a manual checklist for the questionnaire, guidance and handoff.
+
+h3. User stories
+* GUID-001: As an owner, I want to start a guided rehoming questionnaire, so that I can understand my options without immediately creating an advert.
+* GUID-002: As an owner, I want to record my species, quantity, condition, location and urgency, so that the platform can consider my circumstances.
+* GUID-003: As an owner, I want to review and amend my answers, so that the assessment is based on information I intended to supply.
+* GUID-004: As an owner, I want to receive explained rehoming or advice pathways, so that I know the responsible action to consider.
+* GUID-005: As an owner, I want to be warned when identification or transfer rules are uncertain, so that I do not accidentally publish an inappropriate listing.
+* GUID-006: As an owner, I want to see other guidance when rehoming is not possible or urgent, so that I have a useful next step even without an online match.
+
+h3. What to build
+* Tests for navigation, validation and each outcome
+* Manual run of Demo Flow 1
+
+h3. States to handle
+None.
+
+h3. Data in and out
+Uses fixtures.
+
+h3. Depends on
+F-01 to F-06.
+
+h3. Where to look in the prototype
+Demo Flow 1.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Tests pass in CI or locally with one command
+* Three intake examples demonstrated: eligible, unidentified, restricted
+* Pre-fill verified on Shawn’s editor
+
+_Plan ticket F-07 · Week 3_","High","sprint-1","week-3","","3","Farhan"
+"116","Story","F-08 Public species guide pages","Searchable list of supported species with a detail page each, so owners and adopters can read care needs without a listing.
+
+h3. User stories
+* SPEC-001: As an owner or adopter, I want to search the supported species list, so that I can select an organism consistently.
+* SPEC-002: As an adopter, I want to read relevant requirements for a listed species, so that I can understand the care involved.
+* SPEC-003: As a user, I want to see when species advice is incomplete or unverified, so that I can recognise missing or unverified information before making a decision.
+
+h3. What to build
+* Species list page with a search box and animal/plant filter
+* Species detail page: specimen plate, care ranges, habitat, care text, verification note
+* Restricted species shown with a clear ‘cannot be listed’ notice and guidance link
+* Links from the listing page’s ‘Care needs’ panel to the species page
+
+h3. States to handle
+* Search with results
+* No results
+* Restricted species
+* Unknown species not listed
+
+h3. Data in and out
+Reads getSpecies/listSpecies.
+
+h3. Depends on
+Needs F-05.
+
+h3. Where to look in the prototype
+Reuse the prototype’s care panel and specimen plate; your group’s wireframe slide 23 ‘Species information’ shows the layout.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Search finds species by common or scientific name
+* Each detail page shows all care fields with units
+* Restricted species are clearly marked
+
+_Plan ticket F-08 · Week 2_","Medium","sprint-1","week-2","","3","Farhan"
+"117","Story","S-01 Listing editor with pre-fill, validation and preview","Create and edit listings, pre-filled from Farhan’s intake when one is supplied.
+
+h3. User stories
+* LIST-001: As an owner, I want to create a listing which is pre-filled from my questionnaire, so that I do not need to enter the same information twice.
+* LIST-002: As an owner, I want to add a title, description and relevant care details, so that adopters can understand the organism’s needs and circumstances.
+* LIST-003: As an owner, I want to publish, edit or withdraw my listing, so that its information and availability remain accurate.
+
+h3. What to build
+* Two-column layout: form on the left, sticky live preview on the right (card as adopters see it + species care widget)
+* ‘Filled in from your rehoming answers’ notice showing the intake ID when pre-filled
+* Fields: title, species (locked when from intake), quantity, location, condition, availability, description, care notes
+* Photo placeholder area (‘Photos coming in a later sprint’) per the original LIST-001 task
+* Buttons: Save as draft, Publish listing (Save changes when already active)
+* Error summary above the buttons plus inline errors; focus moves to the first error
+
+h3. States to handle
+* New from intake
+* New without intake
+* Editing a draft
+* Editing an active listing
+* Validation errors
+
+h3. Data in and out
+Reads IntakeOutcome from F-06; writes Listing { id, ownerId, speciesId, intakeId, title, qty, location, condition, urgency, description, careNotes, status, created }.
+
+h3. Depends on
+Needs SH-02, SH-03. F-06 supplies the pre-fill.
+
+h3. Where to look in the prototype
+Prototype → My account → My Listings → Edit, or Demo Flow 1 step 9.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Title 10–80 characters and description 40+ characters with inline errors
+* Preview updates as the owner types
+* Draft saves with just a title; Publish requires all required fields
+* Publishing shows a ‘Published’ toast and opens My Listings
+
+_Plan ticket S-01 · Week 2_","High","sprint-1","week-2","reading-week-target","4","Shawn"
+"118","Story","S-02 Public browse page with listing cards","Guests can browse active listings. Cards show only the essentials.
+
+h3. User stories
+* LIST-004: As a visitor, I want to browse active listings, so that I can discover organisms needing homes.
+* LIST-006: As a visitor, I want to use a readable responsive listing interface, so that I can browse comfortably on different screens.
+
+h3. What to build
+* Page heading and one-line explanation
+* Responsive card grid (auto-fill, min 260px)
+* Card: specimen plate, title, ‘Animal · Town’, listed date, at most one tag (‘Needs a home soon’ or ‘Your listing’)
+* Whole card is one link to the listing page
+* Result count
+
+h3. States to handle
+* Listings available
+* No active listings (empty state)
+* Signed-in owner sees ‘Your listing’ tag
+
+h3. Data in and out
+listActiveListings() from listing mocks; species group from F-05 for the plate colour.
+
+h3. Depends on
+Needs SH-02, SH-03.
+
+h3. Where to look in the prototype
+Prototype → Browse listings. Demo Flow 2 step 1.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Only active listings shown
+* Cards hide care ranges, quantity, condition and IDs
+* Grid works from 375px to desktop with no horizontal scroll
+* Newly published listings appear; withdrawn, reserved and rehomed do not
+
+_Plan ticket S-02 · Week 1_","High","sprint-1","week-1","reading-week-target","4","Shawn"
+"119","Story","S-03 Listing details page for adopters","Full listing information with species care needs and the route into compatibility checking.
+
+h3. User stories
+* LIST-004: As a visitor, I want to browse active listings, so that I can discover organisms needing homes.
+* SPEC-002: As an adopter, I want to read relevant requirements for a listed species, so that I can understand the care involved.
+* SPEC-003: As a user, I want to see when species advice is incomplete or unverified, so that I can recognise missing or unverified information before making a decision.
+
+h3. What to build
+* Back link to all listings, large specimen plate, status chip, title, description
+* Facts grid: species, quantity, condition, location (town + district), availability, listed by (first name + initial)
+* Owner’s care notes; ‘Before you ask’ list (what to prepare, what to bring, pickup arranged after acceptance)
+* Sticky side panel: three-step explanation + Check compatibility; if the adopter already has an open request, show its status and a link to My Requests; if the viewer is the owner, show Manage in My Listings
+* Care needs panel from F-05 with the ‘not verified’ note
+
+h3. States to handle
+* Guest
+* Signed-in adopter
+* Adopter with an open request
+* Owner viewing own listing
+* Listing not active
+* Listing not found
+
+h3. Data in and out
+getListing(id), getSpecies(speciesId), request lookup from S-08.
+
+h3. Depends on
+Needs S-02, F-05, S-08.
+
+h3. Where to look in the prototype
+Prototype → Browse → open any listing. Demo Flow 2 step 2.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Check compatibility passes the listing ID to Midhir’s page (through login if needed)
+* No full address or surname is shown
+* All six view states behave as listed
+
+_Plan ticket S-03 · Week 2_","High","sprint-1","week-2","reading-week-target","4","Shawn"
+"120","Story","S-04 Listing lifecycle states","Draft, active, reserved, rehomed and withdrawn behave the same on every page.
+
+h3. User stories
+* LIST-003: As an owner, I want to publish, edit or withdraw my listing, so that its information and availability remain accurate.
+* LIST-007: As an owner, I want to see my listing status and requests, so that I can keep track of my listing.
+
+h3. What to build
+* Status transition helper: draft→active, active→withdrawn, active→reserved (accept), reserved→rehomed (handover), withdrawn→draft
+* Withdraw with inline confirmation; pending requests on that listing close
+* Status chip everywhere from SH-02
+
+h3. States to handle
+* Each of the five statuses
+
+h3. Data in and out
+Listing.status.
+
+h3. Depends on
+Needs S-01.
+
+h3. Where to look in the prototype
+Prototype → My Listings tabs and row actions.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Invalid transitions are refused
+* Status is identical on browse, details and My Listings
+* Withdrawing closes pending requests
+
+_Plan ticket S-04 · Week 2_","High","sprint-1","week-2","","4","Shawn"
+"121","Story","S-05 My Listings owner dashboard","Signed-in owners manage their own listings.
+
+h3. User stories
+* LIST-003: As an owner, I want to publish, edit or withdraw my listing, so that its information and availability remain accurate.
+* LIST-007: As an owner, I want to see my listing status and requests, so that I can keep track of my listing.
+* CORE-001: As a user, I want to access the data and actions that belong to me, so that all data and information is protected.
+
+h3. What to build
+* Header with New listing button (starts the questionnaire)
+* Four counters: active, reserved, drafts, rehomed
+* Status tabs with counts
+* Table: title + ID, species × qty, status chip, open requests, listed date, actions (Edit, Publish, Requests (n), Withdraw, Move to drafts)
+* Table scrolls inside its own container on small screens
+
+h3. States to handle
+* Has listings
+* No listings (empty state)
+* Tab with no results
+* Inline withdraw confirmation
+
+h3. Data in and out
+listListingsByOwner(currentUser), request counts from S-08.
+
+h3. Depends on
+Needs S-04, SH-05.
+
+h3. Where to look in the prototype
+Prototype → My account → My Listings. Demo Flow 1 step 10, Flow 3 steps 6 and 11.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Only the signed-in user’s listings appear
+* Actions shown match the listing’s status
+* Requests (n) opens the inbox filtered to that listing
+
+_Plan ticket S-05 · Week 2_","High","sprint-1","week-2","","4","Shawn"
+"122","Story","S-06 Owner inbox for incoming requests","List and detail of requests on the owner’s listings, using Midhir’s owner-safe habitat summary.
+
+h3. User stories
+* REQ-002: As an owner, I want to see incoming requests, so that I can compare interest in my listings.
+* REQ-008: As an owner or adopter, I want to see request statuses clearly, so that I understand the application progress.
+* HAB-006: As an owner, I want to view a suitable summary of an applicant’s habitat, so that I can assess the request without exposing unnecessary details.
+
+h3. What to build
+* Two-pane layout: request list grouped by listing on the left, detail on the right (stacks on mobile)
+* List item: adopter first name + initial, status chip, date, request ID
+* Detail: heading, introduction, habitat summary (M-05) with compatibility chip, privacy note
+
+h3. States to handle
+* No requests (empty)
+* Pending
+* Accepted
+* Declined
+* Completed
+* On hold (another request accepted)
+
+h3. Data in and out
+RequestService.listForOwner(currentUser); summary from M-05.
+
+h3. Depends on
+Needs S-08, M-05.
+
+h3. Where to look in the prototype
+Prototype → My account → Incoming requests. Demo Flow 3 steps 1–2.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Requests grouped under each listing
+* No adopter address or habitat name is shown
+* Pending count matches the badge in the account menu
+
+_Plan ticket S-06 · Week 2_","High","sprint-1","week-2","","6","Shawn"
+"123","Story","S-07 Accept and decline requests","Owner decisions on pending requests.
+
+h3. User stories
+* REQ-003: As an owner, I want to accept or decline a request, so that I can choose whether to proceed.
+* REQ-008: As an owner or adopter, I want to see request statuses clearly, so that I understand the application progress.
+
+h3. What to build
+* Accept request (primary) and Decline (danger) on pending requests
+* Decline uses inline confirmation
+* After accepting, other pending requests show an ‘On hold’ notice instead of buttons
+* Toasts for each result
+
+h3. States to handle
+* Pending
+* On hold
+* Declined
+
+h3. Data in and out
+RequestService.accept / decline.
+
+h3. Depends on
+Needs S-06, S-08.
+
+h3. Where to look in the prototype
+Demo Flow 3 steps 3–5.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Accepting reserves the listing and hides it from browse
+* A second acceptance on the same listing is impossible
+* Decline asks for confirmation
+
+_Plan ticket S-07 · Week 3_","High","sprint-1","week-3","","6","Shawn"
+"124","Story","S-08 Shared mock request service","One module every request screen calls, so owner and adopter views read the same records. Midhir’s screens depend on it.
+
+h3. User stories
+* REQ-001: As an adopter, I want to submit an adoption request with a short introduction, so that the listing owner can consider me.
+* REQ-002: As an owner, I want to see incoming requests, so that I can compare interest in my listings.
+* REQ-003: As an owner, I want to accept or decline a request, so that I can choose whether to proceed.
+* REQ-004: As an adopter, I want to withdraw my request, so that I can change my mind.
+* REQ-005: As an owner or adopter, I want to track the agreed handover stage, so that we know what remains to complete the transfer.
+* REQ-006: As an owner or adopter, I want to confirm that a handover happened, so that the case is not closed prematurely.
+* CORE-001: As a user, I want to access the data and actions that belong to me, so that all data and information is protected.
+
+h3. What to build
+* submit({ listingId, adopterId, habitatId, intro, compat })
+* listForOwner(ownerId), listForAdopter(adopterId)
+* withdraw(id, by), accept(id, by), decline(id, by), confirmHandover(id, by)
+* Rule checks with plain-English errors
+* Completing both confirmations sets request completed, listing rehomed, other pending requests declined
+
+h3. States to handle
+None.
+
+h3. Data in and out
+AdoptionRequest { id, listingId, adopterId, habitatId, compat, intro, summary, status, ownerConfirmed, adopterConfirmed, created }.
+
+h3. Depends on
+Needs SH-03. Unblocks M-06, M-07, M-09, S-06.
+
+h3. Where to look in the prototype
+Prototype → Demo flows → ‘Behind the scenes’ boxes show each call.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Rejects own listing, inactive listing, duplicate open request, non-match result, second acceptance
+* Only the owner can accept or decline; only the adopter can withdraw
+* Signatures documented in shared contracts
+* Unit tests for every rule
+
+_Plan ticket S-08 · Week 1_","High","sprint-1","week-1","reading-week-target","6","Shawn"
+"125","Story","S-09 Search and filters on browse (stretch)","Only if the core journey is complete. LIST-005 stays Medium in the master backlog.
+
+h3. User stories
+* LIST-005: As a visitor, I want to search and filter listings, so that I can find relevant species and locations.
+
+h3. What to build
+* Search box (species, scientific name, town)
+* Segmented filters: All / Animals / Plants and Any / Aquarium / Pond
+* Result count and Clear filters
+
+h3. States to handle
+* Results
+* No results with Clear filters
+
+h3. Data in and out
+Filters listActiveListings() on the client.
+
+h3. Depends on
+Needs S-02.
+
+h3. Where to look in the prototype
+Prototype → Browse listings toolbar.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Typing filters without losing focus
+* Filters combine
+* Clear filters restores all
+
+_Plan ticket S-09 · Week 3_","Low","sprint-1","week-3","","4","Shawn"
+"126","Story","S-10 Handover tracker and owner confirmation","Shared tracker component plus the owner’s confirmation. Midhir reuses the tracker in M-09.
+
+h3. User stories
+* REQ-005: As an owner or adopter, I want to track the agreed handover stage, so that we know what remains to complete the transfer.
+* REQ-006: As an owner or adopter, I want to confirm that a handover happened, so that the case is not closed prematurely.
+* REQ-008: As an owner or adopter, I want to see request statuses clearly, so that I understand the application progress.
+
+h3. What to build
+* Tracker component: Request accepted → Owner confirmed → Adopter confirmed → Rehoming complete, with done / current / to-do styles; stacks vertically on mobile
+* ‘Confirm handover happened’ button for the owner with a note that both sides must confirm
+* Waiting message after the owner confirms
+* Completed notice when both confirm
+
+h3. States to handle
+* Accepted
+* Owner confirmed
+* Adopter confirmed
+* Completed
+
+h3. Data in and out
+RequestService.confirmHandover(id, ownerId).
+
+h3. Depends on
+Needs S-07, S-08.
+
+h3. Where to look in the prototype
+Prototype → Design system → Handover tracker; Demo Flow 3 steps 7–9.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Tracker reflects both confirmation flags
+* Listing becomes rehomed only after both confirm
+* Tracker exported for Midhir
+
+_Plan ticket S-10 · Week 3_","High","sprint-1","week-3","","6","Shawn"
+"127","Story","M-01 Habitat profile form","Aquarium or pond profile with the conditions the compatibility rules need.
+
+h3. User stories
+* HAB-001: As an adopter, I want to create a basic habitat profile, so that I can reuse my aquarium details across requests.
+* HAB-002: As an adopter, I want to edit my habitat details, so that I can update my suitability for my current setup.
+
+h3. What to build
+* Name (private), type choice cards (Aquarium / Pond)
+* Volume (L), lowest and highest temperature (°C), pH
+* Pond only: deepest point (cm)
+* Filter running (yes / no / not set), filter cycled (yes / no / not sure), lighting (low / medium / high)
+* What already lives there
+* Buttons: Cancel, Save habitat (‘and return to check’ when opened from a check)
+
+h3. States to handle
+* New
+* Editing
+* Aquarium vs pond fields
+* Validation errors
+* Opened from a compatibility check
+
+h3. Data in and out
+HabitatProfile { id, ownerId, name, type, volume, tempMin, tempMax, ph, filter, cycled, depth, light, inhabitants }.
+
+h3. Depends on
+Needs SH-02, SH-03.
+
+h3. Where to look in the prototype
+Prototype → My account → My Habitat → Add a habitat. Demo Flow 2 step 6.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Blank fields allowed; they become ‘missing’ in checks
+* Volume 5–100,000 L, pH 4–10, highest temperature not below lowest, both temperatures or neither
+* Pond-only fields appear only for ponds
+
+_Plan ticket M-01 · Week 1_","High","sprint-1","week-1","reading-week-target","5","Midhir"
+"128","Story","M-02 My Habitat page with save, edit and reuse","Saved habitats belong to the signed-in user and can be reused across listings.
+
+h3. User stories
+* HAB-001: As an adopter, I want to create a basic habitat profile, so that I can reuse my aquarium details across requests.
+* HAB-002: As an adopter, I want to edit my habitat details, so that I can update my suitability for my current setup.
+* CORE-001: As a user, I want to access the data and actions that belong to me, so that all data and information is protected.
+
+h3. What to build
+* Card grid: name, ID, type chip, ‘n details missing’ or ‘complete’ chip, summary list, Edit
+* Add a habitat button
+* Saving from a check returns to that check with the habitat selected
+
+h3. States to handle
+* No habitats (empty)
+* One or more habitats
+* Incomplete habitat
+
+h3. Data in and out
+listHabitats(currentUser), saveHabitat().
+
+h3. Depends on
+Needs M-01, SH-05.
+
+h3. Where to look in the prototype
+Prototype → My account → My Habitat.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Only the user’s habitats show
+* One habitat can be checked against two listings without re-entry
+* Missing-detail count is correct
+
+_Plan ticket M-02 · Week 2_","High","sprint-1","week-2","reading-week-target","5","Midhir"
+"129","Story","M-03 Compatibility check page","Compare a listing’s species needs with a chosen habitat and explain each rule.
+
+h3. User stories
+* HAB-003: As an adopter, I want to check a listing against my habitat, so that I can make a more informed adoption decision.
+* SPEC-002: As an adopter, I want to read relevant requirements for a listed species, so that I can understand the care involved.
+
+h3. What to build
+* Back link to the listing, heading, explanation
+* Habitat picker + Edit this habitat + Add another
+* Outcome banner (from M-04)
+* ‘What we checked’ list: icon, rule name, one-line reason, Met / Not met / Missing / Advice label
+* Range bars for temperature and pH (species range vs habitat values) with a legend
+* Side panel: listing card + care needs
+
+h3. States to handle
+* No saved habitats (empty with Add)
+* Each outcome
+* Switching habitats
+
+h3. Data in and out
+Reads listing from S-03, species from F-05, habitat from M-02.
+
+h3. Depends on
+Needs M-02, F-05, S-03.
+
+h3. Where to look in the prototype
+Prototype → open a listing → Check compatibility. Demo Flow 2 steps 4–7; Design system → Range bar.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Switching habitat updates the result immediately
+* Every rule row has a reason in plain words
+* Range bars are drawn to scale
+
+_Plan ticket M-03 · Week 2_","High","sprint-1","week-2","reading-week-target","5","Midhir"
+"130","Story","M-04 Outcome rules: potential match, needs information, blocked","Example rule set that produces the three agreed outcomes.
+
+h3. User stories
+* HAB-004: As an adopter, I want to know when more information is needed, so that I can correct my profile before requesting adoption.
+* HAB-005: As an adopter, I want to be prevented from applying when a verified hard rule fails, so that a serious incompatibility stops me from applying.
+
+h3. What to build
+* Hard rules (fail → blocked): habitat type, temperature inside range, volume ≥ minimum, filter running (animals), pond depth (pond plants)
+* Missing input → needs_information
+* Advice only (never blocks): pH outside range, filter not cycled, lighting mismatch
+* Action per outcome: Request adoption (match), Add missing details (needs info), disabled Request + reason (blocked)
+
+h3. States to handle
+* potential_match
+* needs_information
+* blocked
+
+h3. Data in and out
+Returns CompatibilityResult { outcome, checks[] }.
+
+h3. Depends on
+Needs M-03.
+
+h3. Where to look in the prototype
+Demo Flow 2: step 4 (needs information), 5 (blocked), 7 (match).
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Each outcome reproducible with fixtures
+* Only potential_match enables Request adoption
+* Results labelled as a guide, not a guarantee
+
+_Plan ticket M-04 · Week 2_","High","sprint-1","week-2","reading-week-target","5","Midhir"
+"131","Story","M-05 Owner-safe habitat summary","Minimal habitat details for Shawn’s owner inbox.
+
+h3. User stories
+* HAB-006: As an owner, I want to view a suitable summary of an applicant’s habitat, so that I can assess the request without exposing unnecessary details.
+* CORE-001: As a user, I want to access the data and actions that belong to me, so that all data and information is protected.
+
+h3. What to build
+* toSafeSummary(habitat) function
+* Summary list component (label/value) Shawn can drop into the inbox
+
+h3. States to handle
+* Complete
+* Missing values shown as —
+
+h3. Data in and out
+HabitatSummary { type, volume, tempMin, tempMax, ph, filter, cycled, depth, inhabitants }.
+
+h3. Depends on
+Needs M-01. Used by S-06, M-06.
+
+h3. Where to look in the prototype
+Prototype → Incoming requests detail → Habitat summary; request form’s ‘What the owner will see’.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Excludes habitat name and any address
+* Copied into the request at submission
+
+_Plan ticket M-05 · Week 2_","High","sprint-1","week-2","","5","Midhir"
+"132","Story","M-06 Request adoption form","Adopter-facing form that calls Shawn’s request service.
+
+h3. User stories
+* REQ-001: As an adopter, I want to submit an adoption request with a short introduction, so that the listing owner can consider me.
+
+h3. What to build
+* Selected habitat row with compatibility chip
+* Introduction textarea (30+ characters, no contact details hint)
+* Acknowledgement checkbox
+* Side panel: ‘What the owner will see’ summary + listing card
+* Buttons: Back, Send request
+
+h3. States to handle
+* Validation errors
+* Service error (duplicate, listing no longer active)
+* Success → My Requests with toast
+
+h3. Data in and out
+Calls RequestService.submit.
+
+h3. Depends on
+Needs M-04, M-05, S-08.
+
+h3. Where to look in the prototype
+Demo Flow 2 step 8.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Can only be reached with a potential_match result
+* Service errors appear in the form without losing text
+* Success opens My Requests
+
+_Plan ticket M-06 · Week 2_","High","sprint-1","week-2","","6","Midhir"
+"133","Story","M-07 My Requests list with withdrawal","Adopter view of every request they have sent.
+
+h3. User stories
+* REQ-004: As an adopter, I want to withdraw my request, so that I can change my mind.
+* REQ-008: As an owner or adopter, I want to see request statuses clearly, so that I understand the application progress.
+
+h3. What to build
+* One card per request: listing title link, species, town, owner first name + initial, date, status chip, request ID
+* Pending: Withdraw request with inline confirmation
+* Declined: short message + Browse other listings
+
+h3. States to handle
+* No requests (empty)
+* Pending
+* Accepted
+* Declined
+* Withdrawn
+* Completed
+
+h3. Data in and out
+RequestService.listForAdopter(currentUser).
+
+h3. Depends on
+Needs S-08.
+
+h3. Where to look in the prototype
+Prototype → My account → My Requests. Demo Flow 2 steps 9–10.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* All five statuses display correctly
+* Withdraw only on pending
+* Owner-side changes appear here
+
+_Plan ticket M-07 · Week 3_","High","sprint-1","week-3","","6","Midhir"
+"134","Task","M-08 Test the adopter journey","Frontend tests and a manual checklist from listing to request.
+
+h3. User stories
+* HAB-001: As an adopter, I want to create a basic habitat profile, so that I can reuse my aquarium details across requests.
+* HAB-003: As an adopter, I want to check a listing against my habitat, so that I can make a more informed adoption decision.
+* HAB-004: As an adopter, I want to know when more information is needed, so that I can correct my profile before requesting adoption.
+* HAB-005: As an adopter, I want to be prevented from applying when a verified hard rule fails, so that a serious incompatibility stops me from applying.
+* REQ-001: As an adopter, I want to submit an adoption request with a short introduction, so that the listing owner can consider me.
+
+h3. What to build
+* Tests for rule outcomes and habitat validation
+* Manual run of Demo Flow 2
+
+h3. States to handle
+None.
+
+h3. Data in and out
+Fixtures.
+
+h3. Depends on
+M-01 to M-07, M-09.
+
+h3. Where to look in the prototype
+Demo Flow 2.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Tests cover empty, mismatched and valid habitats
+* A valid request appears in Shawn’s inbox
+* A blocked result cannot submit, even by calling the service directly
+
+_Plan ticket M-08 · Week 3_","High","sprint-1","week-3","","5","Midhir"
+"135","Story","M-09 Adopter handover confirmation","Adopter’s side of the two-sided handover, reusing Shawn’s tracker.
+
+h3. User stories
+* REQ-005: As an owner or adopter, I want to track the agreed handover stage, so that we know what remains to complete the transfer.
+* REQ-006: As an owner or adopter, I want to confirm that a handover happened, so that the case is not closed prematurely.
+
+h3. What to build
+* Tracker (from S-10) on accepted requests
+* ‘I’ve received them’ button with a note to confirm only after the handover
+* Waiting message when the adopter has confirmed first
+* Completed notice
+
+h3. States to handle
+* Accepted, nobody confirmed
+* Owner confirmed
+* Adopter confirmed
+* Completed
+
+h3. Data in and out
+RequestService.confirmHandover(id, adopterId).
+
+h3. Depends on
+Needs S-10, M-07.
+
+h3. Where to look in the prototype
+Demo Flow 3 step 8.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Completion needs both confirmations
+* Owner’s confirmation shows here without a refresh of mock data
+
+_Plan ticket M-09 · Week 3_","High","sprint-1","week-3","","6","Midhir"
+"136","Story","X-01 Admin species and rule editor (deferred)","Not committed for Sprint 1 under the three-person plan. Keep in the backlog; revisit after the core journey works.
+
+h3. User stories
+* SPEC-004: As an administrator, I want to update reference rules and their sources, so that outdated guidance can be corrected.
+
+h3. What to build
+* List and edit species care ranges and their sources
+* Admin-only route
+
+h3. States to handle
+None.
+
+h3. Data in and out
+Species catalogue.
+
+h3. Depends on
+Core journey complete.
+
+h3. Where to look in the prototype
+None yet.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Team agrees whether to commit it before Sprint 3
+
+_Plan ticket X-01 · Deferred_","Medium","deferred","","","3","Farhan"
+"137","Story","X-02 Reopen a listing after a failed handover (deferred)","Low priority; deferred under the three-person plan.
+
+h3. User stories
+* REQ-007: As an owner, I want to reopen an eligible listing if a handover fails, so that I can look for another adopter without repeating the process.
+
+h3. What to build
+* ‘Handover didn’t happen’ action returning a reserved listing to active
+
+h3. States to handle
+None.
+
+h3. Data in and out
+Listing and request status.
+
+h3. Depends on
+S-10.
+
+h3. Where to look in the prototype
+None yet.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Team agrees whether to commit it
+
+_Plan ticket X-02 · Deferred_","Low","deferred","","","6","Shawn"
+"138","Story","X-03 Messaging between owner and adopter (deferred)","Low priority; deferred under the three-person plan. Pickup details are arranged outside the app for now.
+
+h3. User stories
+* CORE-004: As an owner or adopter, I want to exchange messages about an adoption request, so that we can clarify details before a handover.
+
+h3. What to build
+* Message thread on an accepted request
+
+h3. States to handle
+None.
+
+h3. Data in and out
+New entity.
+
+h3. Depends on
+Core journey complete.
+
+h3. Where to look in the prototype
+None yet.
+Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+
+h3. Acceptance criteria
+* Team agrees whether to commit it
+
+_Plan ticket X-03 · Deferred_","Low","deferred","","","6","Shawn"
