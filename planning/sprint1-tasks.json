@@ -1,5 +1,5 @@
 {
-  "prototype": "https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR",
+  "prototype": "https://aquabridge-zeta.vercel.app/prototype/",
   "stories": [
     { "id": "REG-001", "as": "User", "want": "Create an account", "so": "I can save my listings, habitat information and requests", "pri": "High" },
     { "id": "REG-002", "as": "User", "want": "Sign in to my account", "so": "I can access my saved information", "pri": "High" },

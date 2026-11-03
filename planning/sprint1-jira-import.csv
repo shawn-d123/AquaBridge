@@ -41,7 +41,7 @@ Unblocks everyone. Do first.
 
 h3. Where to look in the prototype
 Prototype → footer → Screen map shows every screen and its owner; use it to name routes and folders.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Framework choice and reasons recorded in the README
@@ -81,7 +81,7 @@ Needs SH-01. Unblocks every screen.
 
 h3. Where to look in the prototype
 Prototype → footer → Design system page (colours, type, buttons, chips, fields, range bar, tracker, card). Every screen in the prototype uses these.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Token values match the prototype’s design system page
@@ -114,7 +114,7 @@ Needs SH-01. Unblocks F-05, F-06, S-02, S-08, M-01, M-03.
 
 h3. Where to look in the prototype
 Prototype → Screen map → ‘Shared contract values’ section lists every status and ID prefix.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * All three agree the contracts in a short meeting; changes after that go through a pull request reviewed by the affected owner
@@ -152,7 +152,7 @@ Needs SH-02 for components. Uses S-02 cards for Recently listed.
 
 h3. Where to look in the prototype
 Prototype → homepage and header. Demo Flow 1 step 1. The aquarium illustration can be copied from the prototype source as an SVG.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Homepage shows both primary actions above the fold on a 1280×720 screen and at 375px
@@ -193,7 +193,7 @@ Needs SH-02, SH-04.
 
 h3. Where to look in the prototype
 Prototype → Log in page; Demo Flow 1 step 8 and Flow 2 step 3 show the return notice.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Guarded routes (editor, My Listings, Incoming requests, My Habitat, compatibility, request, My Requests) send signed-out users to login
@@ -225,7 +225,7 @@ None.
 
 h3. Where to look in the prototype
 This backlog page is the source for the tickets.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Both members can see and move tickets
@@ -255,7 +255,7 @@ All feature tickets.
 
 h3. Where to look in the prototype
 Prototype → footer → Demo flows (Flow 1 owner rehomes, Flow 2 adopter requests, Flow 3 decision and handover).
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Flow 1 runs from homepage to a visible listing without resetting data
@@ -286,7 +286,7 @@ Screens from all three.
 
 h3. Where to look in the prototype
 Prototype → Design system → ‘Rules we follow’.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Checklist published in the repo
@@ -321,7 +321,7 @@ Needs SH-02.
 
 h3. Where to look in the prototype
 Prototype: toast after publishing (Flow 1 step 10), inline ‘Withdraw this listing?’ in My Listings, empty state on Browse when filters match nothing.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Components exist in src/shared and are used by at least one screen per person
@@ -356,7 +356,7 @@ Needs SH-02.
 
 h3. Where to look in the prototype
 Prototype → Rehome. Demo Flow 1 steps 2–5.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Back and Continue keep all entered values
@@ -392,7 +392,7 @@ Needs F-01, F-05.
 
 h3. Where to look in the prototype
 Prototype → Rehome steps 1–4; Design system → choice card and field error.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Animal and plant paths show only relevant questions
@@ -424,7 +424,7 @@ Needs F-02.
 
 h3. Where to look in the prototype
 Prototype → Rehome → Review my answers. Demo Flow 1 step 6.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Change returns to the right step with answers kept
@@ -462,7 +462,7 @@ Needs F-03, F-05.
 
 h3. Where to look in the prototype
 Prototype → Rehome → guidance (try Neon tetra, ‘I’m not sure’, and Red-eared slider). Demo Flow 1 step 7.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * All three outcomes reachable with sample answers
@@ -498,7 +498,7 @@ Needs SH-03.
 
 h3. Where to look in the prototype
 Prototype → Rehome step 2 side panel; listing page ‘Care needs’ panel.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * At least 7 supported species (animals and plants), 2 restricted, 1 unknown
@@ -528,7 +528,7 @@ Needs F-04, SH-05, S-01.
 
 h3. Where to look in the prototype
 Demo Flow 1 steps 7–9.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Editor opens pre-filled with no re-entry
@@ -561,7 +561,7 @@ F-01 to F-06.
 
 h3. Where to look in the prototype
 Demo Flow 1.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Tests pass in CI or locally with one command
@@ -596,7 +596,7 @@ Needs F-05.
 
 h3. Where to look in the prototype
 Reuse the prototype’s care panel and specimen plate; your group’s wireframe slide 23 ‘Species information’ shows the layout.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Search finds species by common or scientific name
@@ -634,7 +634,7 @@ Needs SH-02, SH-03. F-06 supplies the pre-fill.
 
 h3. Where to look in the prototype
 Prototype → My account → My Listings → Edit, or Demo Flow 1 step 9.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Title 10–80 characters and description 40+ characters with inline errors
@@ -669,7 +669,7 @@ Needs SH-02, SH-03.
 
 h3. Where to look in the prototype
 Prototype → Browse listings. Demo Flow 2 step 1.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Only active listings shown
@@ -708,7 +708,7 @@ Needs S-02, F-05, S-08.
 
 h3. Where to look in the prototype
 Prototype → Browse → open any listing. Demo Flow 2 step 2.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Check compatibility passes the listing ID to Midhir’s page (through login if needed)
@@ -738,7 +738,7 @@ Needs S-01.
 
 h3. Where to look in the prototype
 Prototype → My Listings tabs and row actions.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Invalid transitions are refused
@@ -774,7 +774,7 @@ Needs S-04, SH-05.
 
 h3. Where to look in the prototype
 Prototype → My account → My Listings. Demo Flow 1 step 10, Flow 3 steps 6 and 11.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Only the signed-in user’s listings appear
@@ -810,7 +810,7 @@ Needs S-08, M-05.
 
 h3. Where to look in the prototype
 Prototype → My account → Incoming requests. Demo Flow 3 steps 1–2.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Requests grouped under each listing
@@ -843,7 +843,7 @@ Needs S-06, S-08.
 
 h3. Where to look in the prototype
 Demo Flow 3 steps 3–5.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Accepting reserves the listing and hides it from browse
@@ -880,7 +880,7 @@ Needs SH-03. Unblocks M-06, M-07, M-09, S-06.
 
 h3. Where to look in the prototype
 Prototype → Demo flows → ‘Behind the scenes’ boxes show each call.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Rejects own listing, inactive listing, duplicate open request, non-match result, second acceptance
@@ -911,7 +911,7 @@ Needs S-02.
 
 h3. Where to look in the prototype
 Prototype → Browse listings toolbar.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Typing filters without losing focus
@@ -946,7 +946,7 @@ Needs S-07, S-08.
 
 h3. Where to look in the prototype
 Prototype → Design system → Handover tracker; Demo Flow 3 steps 7–9.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Tracker reflects both confirmation flags
@@ -983,7 +983,7 @@ Needs SH-02, SH-03.
 
 h3. Where to look in the prototype
 Prototype → My account → My Habitat → Add a habitat. Demo Flow 2 step 6.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Blank fields allowed; they become ‘missing’ in checks
@@ -1016,7 +1016,7 @@ Needs M-01, SH-05.
 
 h3. Where to look in the prototype
 Prototype → My account → My Habitat.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Only the user’s habitats show
@@ -1051,7 +1051,7 @@ Needs M-02, F-05, S-03.
 
 h3. Where to look in the prototype
 Prototype → open a listing → Check compatibility. Demo Flow 2 steps 4–7; Design system → Range bar.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Switching habitat updates the result immediately
@@ -1084,7 +1084,7 @@ Needs M-03.
 
 h3. Where to look in the prototype
 Demo Flow 2: step 4 (needs information), 5 (blocked), 7 (match).
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Each outcome reproducible with fixtures
@@ -1114,7 +1114,7 @@ Needs M-01. Used by S-06, M-06.
 
 h3. Where to look in the prototype
 Prototype → Incoming requests detail → Habitat summary; request form’s ‘What the owner will see’.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Excludes habitat name and any address
@@ -1146,7 +1146,7 @@ Needs M-04, M-05, S-08.
 
 h3. Where to look in the prototype
 Demo Flow 2 step 8.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Can only be reached with a potential_match result
@@ -1181,7 +1181,7 @@ Needs S-08.
 
 h3. Where to look in the prototype
 Prototype → My account → My Requests. Demo Flow 2 steps 9–10.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * All five statuses display correctly
@@ -1213,7 +1213,7 @@ M-01 to M-07, M-09.
 
 h3. Where to look in the prototype
 Demo Flow 2.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Tests cover empty, mismatched and valid habitats
@@ -1247,7 +1247,7 @@ Needs S-10, M-07.
 
 h3. Where to look in the prototype
 Demo Flow 3 step 8.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Completion needs both confirmations
@@ -1274,7 +1274,7 @@ Core journey complete.
 
 h3. Where to look in the prototype
 None yet.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Team agrees whether to commit it before Sprint 3
@@ -1299,7 +1299,7 @@ S-10.
 
 h3. Where to look in the prototype
 None yet.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Team agrees whether to commit it
@@ -1324,7 +1324,7 @@ Core journey complete.
 
 h3. Where to look in the prototype
 None yet.
-Prototype: https://claude.ai/artifact/T27dmFkuqM9d651VTWv2dR
+Prototype: https://aquabridge-zeta.vercel.app/prototype/
 
 h3. Acceptance criteria
 * Team agrees whether to commit it

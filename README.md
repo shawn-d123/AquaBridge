@@ -10,10 +10,11 @@
 </p>
 
 <p align="center">
-  <a href="prototype/">Prototype</a> ·
-  <a href="prototype/#demos">Demo flows</a> ·
-  <a href="backlog/">Sprint 1 backlog</a> ·
-  <a href="prototype/#design">Design system</a> ·
+  <a href="https://aquabridge-zeta.vercel.app"><b>Live site</b></a> ·
+  <a href="https://aquabridge-zeta.vercel.app/prototype/">Prototype</a> ·
+  <a href="https://aquabridge-zeta.vercel.app/prototype/#demos">Demo flows</a> ·
+  <a href="https://aquabridge-zeta.vercel.app/backlog/">Sprint 1 backlog</a> ·
+  <a href="https://aquabridge-zeta.vercel.app/prototype/#design">Design system</a> ·
   <a href="https://dsouzashawn305.atlassian.net/jira/software/projects/KAN/boards">Jira (KAN)</a>
 </p>
 
@@ -72,6 +73,7 @@ No build step and no dependencies. It’s plain HTML, CSS and JavaScript.
 
 | Option | How |
 |---|---|
+| **Live site** | **https://aquabridge-zeta.vercel.app** (updates automatically on every push to `main`) |
 | Open directly | Double-click `index.html`, or open `prototype/index.html` in a browser |
 | Local server | `npx serve .` then visit the address it prints |
 | Python | `python -m http.server 8000` then visit http://localhost:8000 |
@@ -311,7 +313,7 @@ stateDiagram-v2
 
 **“50% by Reading Week”** means each person’s Reading Week target tickets are merged, their acceptance criteria are ticked in Jira, and they run in the shared app with sample data.
 
-All 40 Deliverable 2 stories map to at least one ticket. See the coverage table at the bottom of the [backlog page](backlog/).
+All 40 Deliverable 2 stories map to at least one ticket. See the coverage table at the bottom of the [backlog page](https://aquabridge-zeta.vercel.app/backlog/).
 
 ---
 
@@ -350,12 +352,18 @@ This rebuilds `backlog/index.html` and `planning/sprint1-jira-import.csv`. Edit 
 
 ## Deploying to Vercel
 
-The site is static, so it needs no framework, build command or settings.
+The site is live at **https://aquabridge-zeta.vercel.app**. It's the Vercel project `aquabridge`, connected to this repository.
 
-1. Push this folder to GitHub.
-2. In Vercel: **Add New → Project →** import the repository.
-3. Framework preset **Other**, leave the build command empty, output directory `.` (the repo root).
-4. Deploy. The root URL opens the team hub; `/prototype/` and `/backlog/` open the pages.
+| Push to | Result |
+|---|---|
+| `main` | Production deploy to https://aquabridge-zeta.vercel.app within about a minute |
+| Any other branch | A preview deploy with its own URL, shown on the pull request |
+
+The site is static, so there is no framework, build command or environment variable. To set it up again from scratch:
+
+1. In Vercel: **Add New → Project →** import `shawn-d123/AquaBridge`.
+2. Framework preset **Other**, leave the build command empty, output directory `.` (the repo root).
+3. Deploy. The root URL opens the team hub; `/prototype/` and `/backlog/` open the pages.
 
 > [!IMPORTANT]
 > A Vercel link is public to anyone who has it. The data is fictional, but turn on **Vercel Authentication / password protection** in the project settings if you want it private to the team.
