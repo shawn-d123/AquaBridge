@@ -1,0 +1,238 @@
+@import 'tailwindcss';
+
+/*
+  AquaBridge design tokens (light only), matching the team design system (SH-02, Midhir).
+  Every colour, font, size and radius used in the app comes from here, so use these utilities
+  (bg-primary, text-ink-2, rounded-ab …) and never raw hex values or Tailwind's default palette.
+*/
+@theme {
+  --color-*: initial;
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-mist: #f5f7f7; /* Page sections and quiet fills */
+  --color-surface: #ffffff; /* Page background, cards, forms */
+  --color-surface-2: #eef2f2; /* Table heads, secondary buttons, insets */
+  --color-line: #d4dcdc; /* Borders and dividers */
+  --color-line-strong: #7a8a8f; /* Form field borders: 3.6:1 contrast (WCAG non-text minimum is 3:1) */
+  --color-ink: #13293d; /* Headings and body text */
+  --color-ink-2: #4b5f6b; /* Secondary text and hints */
+  --color-primary: #0a6b60; /* The one accent: primary buttons and links */
+  --color-primary-hover: #075249;
+  --color-primary-soft: #e3f1ee; /* Selected rows and the info inset */
+  --color-weed: #5cc4a6; /* Logo wave only */
+  --color-weed-soft: #c9efe2;
+  --color-ok: #1d6e46;
+  --color-ok-soft: #dcefe3;
+  --color-warn: #8a5300;
+  --color-warn-soft: #fbedd2;
+  --color-bad: #b02a22;
+  --color-bad-soft: #fae1de;
+  --color-mute-soft: #e9eeee;
+  --color-plate-trop: #d6efe9;
+  --color-plate-cold: #dee8f2;
+  --color-plate-plant: #e0efd9;
+  --color-plate-pond: #edebd5;
+
+  /* One typeface for everything. Numbers use tabular figures where they line up in tables. */
+  --font-display: 'Atkinson Hyperlegible Next', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Atkinson Hyperlegible Next', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'Atkinson Hyperlegible Next', 'Segoe UI', system-ui, sans-serif;
+  --font-code: ui-monospace, Consolas, monospace; /* Only for code in the team tools */
+
+  /* Type scale (px): 14 · 16 · 18 · 22 · 28 · 36 · 48. Sizes inherit line-height from their parent. */
+  --text-*: initial;
+  --text-xs: 0.875rem;
+  --text-sm: 1rem;
+  --text-md: 1.125rem;
+  --text-lg: 1.375rem;
+  --text-xl: 1.75rem;
+  --text-2xl: 2.25rem;
+  --text-3xl: clamp(2.25rem, 4.5vw, 3rem);
+
+  --radius-ab: 8px; /* Cards, images, panels */
+  --radius-ab-sm: 4px; /* Buttons, inputs, tags */
+  --container-page: 1200px;
+  --shadow-card: 0 1px 2px rgb(19 41 61 / 0.06), 0 2px 8px rgb(19 41 61 / 0.06);
+
+  /* Breakpoints: sm 640px · md 760px · lg 900px (two-pane layouts start here) · xl 1080px (full header) */
+  --breakpoint-*: initial;
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 47.5rem;
+  --breakpoint-lg: 56.25rem;
+  --breakpoint-xl: 67.5rem; /* header switches to the Menu button below 1080px */
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+    scroll-behavior: smooth;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+  body {
+    background: var(--color-surface);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-size: 1.0625rem;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    line-height: 1.2;
+    text-wrap: balance;
+    letter-spacing: -0.005em;
+  }
+  h1 {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    line-height: 1.12;
+  }
+  h2 {
+    font-size: var(--text-xl);
+    font-weight: 700;
+  }
+  h3 {
+    font-size: var(--text-lg);
+    font-weight: 600;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  a {
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+  a:hover {
+    color: var(--color-primary-hover);
+    text-decoration-thickness: 2px;
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+  input:is([type='text'], [type='email'], [type='password'], [type='number'], [type='search']),
+  select,
+  textarea {
+    font: inherit;
+    color: var(--color-ink);
+    background: var(--color-surface);
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-ab-sm);
+    padding: 9px 12px;
+    min-height: 44px;
+    width: 100%;
+    min-width: 0;
+  }
+  input:hover,
+  select:hover,
+  textarea:hover {
+    border-color: var(--color-ink-2);
+  }
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline-offset: 0;
+  }
+  textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+  button {
+    cursor: pointer;
+  }
+  ::selection {
+    background: var(--color-primary-soft);
+  }
+}
+
+/*
+  The few patterns that are clearer as CSS than as utilities:
+  field error outlines and the aquarium animation.
+*/
+@layer components {
+  .has-error :is(input:not([type='radio'], [type='checkbox']), select, textarea) {
+    border-color: var(--color-bad);
+    box-shadow: 0 0 0 1px var(--color-bad);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .swim-a {
+      animation: bob 6s ease-in-out infinite;
+    }
+    .swim-b {
+      animation: bob 4.6s ease-in-out -1.2s infinite;
+    }
+    .swim-c {
+      animation: bob 5.4s ease-in-out -2.6s infinite;
+    }
+    .sway {
+      transform-box: fill-box;
+      transform-origin: 50% 100%;
+      animation: sway 7s ease-in-out infinite;
+    }
+    .sway-2 {
+      animation-delay: -3s;
+    }
+    .bub {
+      transform-box: fill-box;
+      animation: rise 3.6s linear infinite;
+    }
+    .bub:nth-of-type(2) {
+      animation-delay: -0.7s;
+    }
+    .bub:nth-of-type(3) {
+      animation-delay: -1.4s;
+    }
+    .bub:nth-of-type(4) {
+      animation-delay: -2.1s;
+    }
+    .bub:nth-of-type(5) {
+      animation-delay: -2.8s;
+    }
+  }
+}
+
+@keyframes bob {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(12px, -7px);
+  }
+}
+@keyframes sway {
+  0%,
+  100% {
+    transform: rotate(-2.5deg);
+  }
+  50% {
+    transform: rotate(2.5deg);
+  }
+}
+@keyframes rise {
+  0% {
+    transform: translateY(0);
+    opacity: 0.95;
+  }
+  100% {
+    transform: translateY(-34px);
+    opacity: 0.15;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
