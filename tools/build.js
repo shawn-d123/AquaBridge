@@ -19,7 +19,7 @@ const page = body => body.startsWith('<!doctype') ? body : HEAD + body + '\n</ht
 
 const data = JSON.parse(read('planning/sprint1-tasks.json'));
 
-// Backlog page: links point at the prototype in this repo rather than the Claude-hosted copy.
+// Backlog page: links point at the prototype in this repo rather than an old hosted copy.
 const tpl = read('planning/backlog.template.html');
 write('backlog/index.html', page(tpl.replace('/*DATA*/', JSON.stringify(data)).replace('/*PROTO*/', '../prototype/')));
 

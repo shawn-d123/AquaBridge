@@ -5,7 +5,7 @@ Audit of the live site (https://aquabridge-zeta.vercel.app/prototype/) against c
 ## How we judged it
 
 - **Measured:** Adrian Krebs's DOM scan of 500 Show HN sites ([design slop](https://www.adriankrebs.ch/blog/design-slop/)): gradients 28%, untouched Tailwind/shadcn defaults 23.5%, three-card feature grids 20%, "distinctive default" fonts 15.8%, card accent stripes 13%, stat rows 12%, uppercase eyebrow labels ~10%, numbered 1-2-3 steps 9.4%.
-- **Named patterns:** Anthropic's frontend guidance ([link](https://claude.com/blog/improving-frontend-design-through-skills)), Hallmark's banned anti-patterns ("eyebrow on every section: uppercase mono-cap labels"), Impeccable, NN/g on AI prototypes ("flat and interchangeable").
+- **Named patterns:** Hallmark's banned anti-patterns ("eyebrow on every section: uppercase mono-cap labels"), Impeccable, NN/g on AI prototypes ("flat and interchangeable").
 - **Usability:** Nielsen's 10 heuristics, GOV.UK Design System (question pages, error messages, tags, check answers), NN/g on form labels.
 - **References:** GOV.UK services, RSPCA Find a Pet, Blue Cross, Gumtree/Preloved, Monzo Help.
 
